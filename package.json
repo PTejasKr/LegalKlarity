@@ -1,0 +1,11 @@
+{
+  "name": "legalklarity",
+  "version": "1.0.0",
+  "description": "**Generative AI for Demystifying Legal Documents**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
