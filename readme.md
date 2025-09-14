@@ -20,7 +20,7 @@ LegalKlarity uses advanced AI to simplify complex legal documents, making legal 
 - Frontend: React.js + TypeScript
 - Backend: Node.js + Express  
 - AI/ML: Gemini Pro + Advanced NLP
-- Database: MongoDB/Firestore
+- Database: Firestore
 
 ## Development
 
