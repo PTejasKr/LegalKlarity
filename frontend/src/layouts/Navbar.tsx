@@ -1,0 +1,207 @@
+import { useState, useEffect } from "react";
+import { getAuth, signOut } from "firebase/auth";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { getCurrentUserAsync } from "../store/authSlice";
+import { Menu, X, User, LogOut, Home, FileText } from "lucide-react";
+
+const Navbar = () => {
+  const dispatch = useAppDispatch();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Close all menus when route changes
+    setMobileMenuOpen(false);
+    setUserMenuOpen(false);
+  }, [location]);
+
+  const handleLogout = async () => {
+    await signOut(getAuth());
+    localStorage.removeItem("idToken");
+    dispatch(getCurrentUserAsync());
+    navigate("/");
+  };
+
+  const navigation = [
+    { name: "Home", href: "/", icon: Home },
+    { name: "Dashboard", href: "/dashboard", icon: FileText, authenticated: true },
+  ];
+
+  return (
+    <header className="bg-white shadow-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <a href="/" className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center">
+                <span className="text-white font-bold text-sm">LK</span>
+              </div>
+              <span className="text-xl font-bold text-gray-900">LegalKlarity</span>
+            </a>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navigation
+              .filter(item => !item.authenticated || isAuthenticated)
+              .map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600"
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span className="text-sm font-medium">{item.name}</span>
+                </a>
+              ))}
+          </nav>
+
+          {/* User Actions */}
+          <div className="flex items-center space-x-4">
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center space-x-2 text-sm rounded-full focus:outline-none"
+                >
+                  <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <User className="h-4 w-4 text-indigo-600" />
+                  </div>
+                </button>
+
+                {userMenuOpen && (
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">{user?.displayName || 'User'}</p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                    </div>
+                    <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Dashboard
+                    </a>
+                    <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Settings
+                    </a>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-sm font-medium text-gray-700 hover:text-indigo-600"
+                >
+                  Sign in
+                </button>
+                <button
+                  onClick={() => navigate("/register")}
+                  className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
+                >
+                  Get Started
+                </button>
+              </div>
+            )}
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-md text-gray-700 hover:text-indigo-600 focus:outline-none"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="pt-2 pb-3 space-y-1">
+            {navigation
+              .filter(item => !item.authenticated || isAuthenticated)
+              .map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-indigo-500 hover:text-gray-900"
+                >
+                  {item.name}
+                </a>
+              ))}
+          </div>
+          <div className="pt-4 pb-3 border-t border-gray-200">
+            {isAuthenticated ? (
+              <div className="flex items-center px-4">
+                <div className="flex-shrink-0">
+                  <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <User className="h-5 w-5 text-indigo-600" />
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <div className="text-base font-medium text-gray-800">{user?.displayName || 'User'}</div>
+                  <div className="text-sm font-medium text-gray-500">{user?.email}</div>
+                </div>
+              </div>
+            ) : null}
+            <div className="mt-3 px-2 space-y-1">
+              {isAuthenticated ? (
+                <>
+                  <a href="/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+                    Dashboard
+                  </a>
+                  <a href="/settings" className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+                    Settings
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate("/login");
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  >
+                    Sign in
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/register");
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Get Started
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+};
+
+export default Navbar;
