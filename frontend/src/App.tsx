@@ -7,7 +7,7 @@ import HomePage from './pages/home/HomePage';
 import Footer from './layouts/Footer';
 import Navbar from './layouts/Navbar';
 import Login from './pages/auth/Login';
-import Register from './pages/auth/SignUp';
+import Register from './pages/auth/Register';
 import RoleSelection from './pages/dashboard/agreement/RoleSelection';
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './hooks/redux';
@@ -33,10 +33,10 @@ function App() {
     const params = new URLSearchParams(location.search);
     const targetGroup = params.get('targetGroup');
     // Map role id to category prop
-    let category: 'citizen' | 'student' | 'business_owner' = 'student';
-    if (targetGroup === 'citizen') category = 'citizen';
-    else if (targetGroup === 'business') category = 'business_owner';
-    else if (targetGroup === 'student') category = 'student';
+    let category: 'individual' | 'institutional' | 'enterprise' = 'institutional';
+    if (targetGroup === 'citizen') category = 'individual';
+    else if (targetGroup === 'business') category = 'enterprise';
+    else if (targetGroup === 'student') category = 'institutional';
     return <SummaryPage targetGroup={category} />;
   }
 

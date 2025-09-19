@@ -24,7 +24,13 @@ export const agreementSummaryAsync = createAsyncThunk(
       const response = await agreementService.agreementSummary(file, uid, targetGroup, language);
       return response;
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Summary failed';
+      let message = error.response?.data?.message || 'Summary failed';
+      
+      // Handle quota exceeded error specifically
+      if (error.response?.status === 429) {
+        message = 'Our AI service is currently overloaded. Please try again later.';
+      }
+      
       toast.error(message);
       return rejectWithValue(message);
     }

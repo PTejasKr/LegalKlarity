@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Upload, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import CitizenSummary from "../../../components/agreement/IndividualSummary";
-import BusinessSummary from "../../../components/agreement/EnterpriseSummary";
-import StudentSummary from "../../../components/agreement/InstitutinalSummary";
+import IndividualSummary from "../../../components/agreement/IndividualSummary";
+import EnterpriseSummary from "../../../components/agreement/EnterpriseSummary";
+import InstitutionalSummary from "../../../components/agreement/InstitutionalSummary";
 
 type Props = {
   targetGroup: "individual" | "institutional" | "enterprise";
@@ -25,13 +25,13 @@ interface StudentOutput {
 }
 // Use shared types
 import type { BusinessOutput } from "../../../types";
-import { generateCitizenPDF } from "../../../components/pdf/IndividualPdf";
-import { generateBusinessPDF } from "../../../components/pdf/EnterprisePdf";
+import { generateCitizenPDF } from "../../../components/pdf/individualPdf";
+import { generateBusinessPDF } from "../../../components/pdf/enterprisePdf";
+import { generateStudentPDF } from "../../../components/pdf/institutionalPdf";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
 import { agreementSummaryAsync } from "../../../store/agreementSlice";
 import { toast } from "react-toastify";
 import Button from "../../../components/common/Button";
-import { generateStudentPDF } from "../../../components/pdf/InstitutionalPdf";
 interface CitizenOutput {
   title: string;
   about: string;
@@ -50,9 +50,9 @@ interface CitizenOutput {
 }
 
 type SummaryUnion =
-  | ({ type: "citizen" } & CitizenOutput)
-  | ({ type: "student" } & StudentOutput)
-  | ({ type: "business_owner" } & BusinessOutput);
+  | ({ type: "individual" } & CitizenOutput)
+  | ({ type: "institutional" } & StudentOutput)
+  | ({ type: "enterprise" } & BusinessOutput);
 
 
 export default function SummaryPage({ targetGroup }: Props) {
@@ -124,11 +124,11 @@ export default function SummaryPage({ targetGroup }: Props) {
         if (!summary) return null;
         switch (targetGroup) {
         case "individual":
-            return <CitizenSummary aiRawOutput={summary as CitizenOutput} />;
+            return <IndividualSummary aiRawOutput={summary as CitizenOutput} />;
         case "institutional":
-            return <StudentSummary aiRawOutput={summary as StudentOutput} />;
+            return <InstitutionalSummary aiRawOutput={summary as StudentOutput} />;
         case "enterprise":
-            return <BusinessSummary aiRawOutput={summary as BusinessOutput} />;
+            return <EnterpriseSummary aiRawOutput={summary as BusinessOutput} />;
         default:
             return null;
         }
