@@ -22,12 +22,27 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
+  /* Dark mode body */
+  .dark body {
+    color: #d1d5db;
+    background-color: #0f172a;
+  }
+  
   /* Headings use Inter with refined hierarchy */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 700;
     line-height: 1.2;
     color: #111827;
+  }
+  
+  .dark h1, 
+  .dark h2, 
+  .dark h3, 
+  .dark h4, 
+  .dark h5, 
+  .dark h6 {
+    color: #f1f5f9;
   }
   
   h1 {
@@ -88,13 +103,25 @@
     @apply bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden;
   }
   
+  .dark .card {
+    @apply bg-slate-800 border-slate-700;
+  }
+  
   .card-hover {
     @apply bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition;
+  }
+  
+  .dark .card-hover {
+    @apply bg-slate-800 border-slate-700 hover:shadow-lg;
   }
   
   /* Button variants */
   .btn {
     @apply inline-flex items-center justify-center rounded-lg font-medium transition focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .dark .btn {
+    @apply focus:ring-offset-slate-900;
   }
   
   .btn-primary {
@@ -109,8 +136,16 @@
     @apply btn border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-primary-500;
   }
   
+  .dark .btn-outline {
+    @apply border-slate-600 text-slate-200 hover:bg-slate-800 focus:ring-primary-500;
+  }
+  
   .btn-ghost {
     @apply btn text-gray-700 hover:bg-gray-100 focus:ring-primary-500;
+  }
+  
+  .dark .btn-ghost {
+    @apply text-slate-200 hover:bg-slate-800 focus:ring-primary-500;
   }
   
   /* Form elements */
@@ -118,8 +153,16 @@
     @apply block w-full rounded-lg border border-gray-300 bg-white py-2 px-3 text-gray-900 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
   }
   
+  .dark .input {
+    @apply bg-slate-800 border-slate-600 text-slate-100 focus:border-primary-500 focus:ring-primary-500;
+  }
+  
   .input-error {
     @apply input border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500;
+  }
+  
+  .dark .input-error {
+    @apply border-red-500 text-red-300 placeholder-red-400;
   }
   
   /* Badge component */
@@ -131,8 +174,16 @@
     @apply badge bg-primary-100 text-primary-800;
   }
   
+  .dark .badge-primary {
+    @apply bg-primary-900 text-primary-200;
+  }
+  
   .badge-secondary {
     @apply badge bg-secondary-100 text-secondary-800;
+  }
+  
+  .dark .badge-secondary {
+    @apply bg-secondary-900 text-secondary-200;
   }
   
   /* Alert component */
@@ -144,15 +195,31 @@
     @apply alert bg-blue-50 text-blue-800;
   }
   
+  .dark .alert-info {
+    @apply bg-blue-900 text-blue-200;
+  }
+  
   .alert-success {
     @apply alert bg-green-50 text-green-800;
+  }
+  
+  .dark .alert-success {
+    @apply bg-green-900 text-green-200;
   }
   
   .alert-warning {
     @apply alert bg-yellow-50 text-yellow-800;
   }
   
+  .dark .alert-warning {
+    @apply bg-yellow-900 text-yellow-200;
+  }
+  
   .alert-error {
     @apply alert bg-red-50 text-red-800;
+  }
+  
+  .dark .alert-error {
+    @apply bg-red-900 text-red-200;
   }
 }

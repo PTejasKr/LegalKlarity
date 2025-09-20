@@ -92,24 +92,24 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-slate-900">
       <div className="max-w-2xl w-full space-y-8">
         <div>
           <div className="mx-auto h-16 w-16 rounded-full bg-primary-600 flex items-center justify-center">
             <span className="text-white text-2xl font-bold">LK</span>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
             Create your LegalKlarity account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-600 dark:text-slate-400">
             Sign up for an account to get started
           </p>
         </div>
         
-        <div className="mt-8 bg-white py-8 px-4 shadow rounded-lg sm:px-10">
+        <div className="mt-8 bg-white py-8 px-4 shadow rounded-lg sm:px-10 dark:bg-slate-800">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {errors.general && (
-              <div className="bg-[#e8eaf6] border-l-4 border-[#1a237e] text-[#1a237e] px-4 py-3 rounded-lg text-sm shadow-sm mb-2">
+              <div className="bg-[#e8eaf6] border-l-4 border-[#1a237e] text-[#1a237e] px-4 py-3 rounded-lg text-sm shadow-sm mb-2 dark:bg-blue-900/20 dark:border-blue-700 dark:text-blue-200">
                 <div className="flex items-center">
                   <span className="mr-2">⚠️</span>
                   {errors.general}
@@ -140,7 +140,7 @@ const Register: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-black mb-1">
+              <label htmlFor="role" className="block text-sm font-medium text-black mb-1 dark:text-white">
                 Language
               </label>
               <select
@@ -148,7 +148,7 @@ const Register: React.FC = () => {
                 name="language"
                 value={formData.language}
                 onChange={handleInputChange}
-                className="block w-full px-3 py-2.5 bg-white border border-[#e6e1d5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CDA047] focus:border-[#CDA047] text-sm transition-colors"
+                className="block w-full px-3 py-2.5 bg-white border border-[#e6e1d5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CDA047] focus:border-[#CDA047] text-sm transition-colors dark:bg-slate-700 dark:border-slate-600 dark:text-white"
               >
                 <option value="en">English</option>
                 <option value="hi">Hindi (हिन्दी)</option>
@@ -191,12 +191,12 @@ const Register: React.FC = () => {
                 <option value="njz">Naga (Naga languages)</option>
                 <option value="en-IN">Other (Other Indian Language)</option>
               </select>
-              <p className="mt-1 text-xs text-black/70">
+              <p className="mt-1 text-xs text-black/70 dark:text-slate-400">
                 Select your Language
               </p>
             </div>
               <div>
-                <label htmlFor="region" className="block text-sm font-medium text-black mb-1">
+                <label htmlFor="region" className="block text-sm font-medium text-black mb-1 dark:text-white">
                   Region/State
                 </label>
                 <select
@@ -204,7 +204,7 @@ const Register: React.FC = () => {
                   name="region"
                   value={formData.region}
                   onChange={handleInputChange}
-                  className="block w-full px-3 py-2.5 bg-white border border-[#e6e1d5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CDA047] focus:border-[#CDA047] text-sm transition-colors"
+                  className="block w-full px-3 py-2.5 bg-white border border-[#e6e1d5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CDA047] focus:border-[#CDA047] text-sm transition-colors dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                 >
                   <option value="">Select Region</option>
                   <option value="andhra-pradesh">Andhra Pradesh</option>
@@ -266,17 +266,17 @@ const Register: React.FC = () => {
             <Button
               type="submit"
               loading={loading}
-              className="w-full bg-gradient-to-br from-[#e5e7eb] via-[#f3f4f6] to-[#f9fafb] text-[#1a237e] font-bold text-lg rounded-full shadow-lg transition border border-[#b1b4b6] hover:bg-[#e0e7ef]"
+              className="w-full bg-gradient-to-br from-[#e5e7eb] via-[#f3f4f6] to-[#f9fafb] text-[#1a237e] font-bold text-lg rounded-full shadow-lg transition border border-[#b1b4b6] hover:bg-[#e0e7ef] dark:from-slate-700 dark:via-slate-800 dark:to-slate-900 dark:text-white dark:border-slate-600 dark:hover:from-slate-600 dark:hover:via-slate-700 dark:hover:to-slate-800"
               size="lg"
             >
               Create Account
             </Button>
             <div className="text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-slate-400">
                 Already have an account?{' '}
                 <Link
                   to="/login"
-                  className="font-medium text-primary-600 hover:text-primary-500"
+                  className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
                 >
                   Sign in
                 </Link>

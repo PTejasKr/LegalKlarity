@@ -8,8 +8,16 @@ import axios from "axios";
 import FormData from 'form-data';
 import fs from 'fs';
 import { mockSummarizeAgreement, mockProcessWithGemini } from "../services/mockGeminiApi.services";
+import multer from "multer";
 
-const agreementSummary = asyncHandler(async (req: Request, res: Response) => {
+// Extend the Request type to include files property from multer
+interface MulterRequest extends Request {
+    files?: {
+        [fieldname: string]: multer.File[];
+    };
+}
+
+const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) => {
     const { uid, language, targetGroup } = req.body;
     
     // Log the received values for debugging
@@ -497,7 +505,7 @@ const translateTextController = asyncHandler(async (req: Request, res: Response)
     }
 });
 
-const uploadFile = asyncHandler(async (req: Request, res: Response) => {
+const uploadFile = asyncHandler(async (req: MulterRequest, res: Response) => {
     // Multer's req.files is { [fieldname: string]: File[] }
     const file = (req.files && (req.files as any)['file'] && (req.files as any)['file'][0]) || null;
 

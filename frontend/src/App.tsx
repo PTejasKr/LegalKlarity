@@ -17,6 +17,7 @@ import { useLocation } from 'react-router-dom';
 import CasesList from './pages/dashboard/case/CasesList';
 import AgreementProcess from './pages/dashboard/process/AgreementProcess';
 import Dashboard from './pages/dashboard/Dashboard';
+import Settings from './pages/dashboard/Settings';
 import Chatbot from './pages/home/Chatbot';
 
 function App() {
@@ -56,7 +57,7 @@ function App() {
         theme="dark"
       />
 
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
         <Navbar />
         <main className="">
           <Routes>
@@ -67,6 +68,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/active" element={<div>frontend active</div>} />
             <Route path='/dashboard' element={isAuthenticated ? <Dashboard /> : <Login />} />
+            <Route path="/dashboard/settings" element={isAuthenticated ? <Settings /> : <Login />} />
             <Route path="/dashboard/role-selection" element={isAuthenticated ? <RoleSelection /> : <Login />} />
             <Route path="/dashboard/agreement/summary" element={isAuthenticated ? <SummaryPageWithTargetGroup /> : <Login />} />
             <Route path="/dashboard/case/case-details" element={isAuthenticated ? <CasesList /> : <Login />} />
