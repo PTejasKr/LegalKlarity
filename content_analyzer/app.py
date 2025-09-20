@@ -14,16 +14,23 @@ import os
 from datetime import datetime
 import google.generativeai as genai
 
-_classifier = None
-def get_classifier():
-    global _classifier
-    if _classifier is None:
-        _classifier = pipeline(
-            "zero-shot-classification",
-            model="valhalla/distilbart-mnli-12-3",
-            device=-1  # CPU
-        )
-    return _classifier
+# Flask app
+app = Flask(__name__)
+
+# Load environment variables
+GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "legalklarity")
+GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+
+# Initialize Gemini AI if API key is available
+GEMINI_AVAILABLE = False
+if GEMINI_API_KEY:
+    try:
+        genai.configure(api_key=GEMINI_API_KEY)
+        GEMINI_AVAILABLE = True
+    except Exception as e:
+        print(f"Failed to initialize Gemini AI: {e}")
 
 _classifier = None
 def get_classifier():
@@ -33,10 +40,7 @@ def get_classifier():
             "zero-shot-classification",
             model="valhalla/distilbart-mnli-12-3",
             device=-1  # CPU
-        )
-    return _classifier
-
-# Section cues to check for agreements
+        # Section cues to check for agreements
 
 POSITIVE_LABELS = [
     "agreement", "legal contract", "rental agreement", "lease agreement",
@@ -58,8 +62,6 @@ SECTION_CUES = [
 # Helpers
 def safe_join_text(parts):
     return "\n".join([p for p in parts if p])
-
-def chunk_text(text, max_words=300, max_chunks=10):
     words = text.split()
     chunks = [" ".join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
     return chunks[:max_chunks]
