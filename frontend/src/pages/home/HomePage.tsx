@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-              Legal Intelligence for the <span className="text-indigo-600">Modern World</span>
+              Demystifying Legal Documents with <span className="text-indigo-600">AI</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-slate-300 mb-10 max-w-3xl mx-auto">
               Transform how you interact with legal documents. Our AI-powered platform makes complex legal language accessible, actionable, and collaborative.
@@ -62,7 +62,7 @@ const HomePage: React.FC = () => {
                 onClick={() => navigate("/dashboard")}
                 className="px-8 py-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition shadow-lg flex items-center justify-center dark:bg-indigo-700 dark:hover:bg-indigo-600"
               >
-                Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                Upload a Document Now <ArrowRight className="ml-2 h-5 w-5" />
               </button>
               <button
                 onClick={() => navigate("/demo")}

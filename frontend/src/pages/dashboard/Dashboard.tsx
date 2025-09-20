@@ -6,7 +6,7 @@ export default function Dashboard() {
   
   const features = [
     {
-      name: "Agreement Summary",
+      name: "Upload Document",
       description: "Quickly understand key points of contracts and agreements with AI-powered analysis.",
       icon: FileText,
       path: "/dashboard/role-selection",
@@ -14,7 +14,15 @@ export default function Dashboard() {
       hoverColor: "hover:bg-blue-100 dark:hover:bg-blue-900/50"
     },
     {
-      name: "Agreement Process",
+      name: "AI Legal Assistant",
+      description: "Interactive chatbot for answering your legal questions in real-time.",
+      icon: Bot,
+      path: "/dashboard", // We'll need to implement this
+      color: "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
+      hoverColor: "hover:bg-amber-100 dark:hover:bg-amber-900/50"
+    },
+    {
+      name: "Document Analysis",
       description: "Step-by-step guidance for drafting and executing agreements with legal best practices.",
       icon: ListTodo,
       path: "/dashboard/process/summary",
@@ -75,7 +83,7 @@ export default function Dashboard() {
         {/* Features Grid */}
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Legal Tools</h3>
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
