@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Building, User, Building2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const exampleAgreements: Record<string, string[]> = {
   enterprise: [
@@ -57,6 +57,67 @@ const RoleSelection = () => {
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
   const [slideOut, setSlideOut] = useState<string | null>(null);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Create style element for CSS
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .perspective-container {
+        perspective: 1000px;
+      }
+      
+      .flip-card-container {
+        perspective: 1000px;
+      }
+      
+      .flip-card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .flip-card.flipped {
+        transform: rotateY(180deg);
+      }
+      
+      .flip-card-front,
+      .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        border-radius: 0.5rem;
+      }
+      
+      .flip-card-back {
+        transform: rotateY(180deg);
+      }
+      
+      .slide-out {
+        transition: transform 0.3s ease-in-out;
+      }
+      
+      @keyframes slideOut {
+        to {
+          transform: translateX(100vw);
+        }
+      }
+      
+      .slide-out {
+        animation: slideOut 0.3s ease-in-out forwards;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Cleanup function to remove the style element
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   
   const handleSelect = (roleId: string) => {
     setSlideOut(roleId);
@@ -200,57 +261,6 @@ const RoleSelection = () => {
           </div>
         </motion.div>
       </div>
-      
-      <style jsx>{`
-        .perspective-container {
-          perspective: 1000px;
-        }
-        
-        .flip-card-container {
-          perspective: 1000px;
-        }
-        
-        .flip-card {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          transform-style: preserve-3d;
-          transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .flip-card.flipped {
-          transform: rotateY(180deg);
-        }
-        
-        .flip-card-front,
-        .flip-card-back {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          backface-visibility: hidden;
-          display: flex;
-          flex-direction: column;
-          border-radius: 0.5rem;
-        }
-        
-        .flip-card-back {
-          transform: rotateY(180deg);
-        }
-        
-        .slide-out {
-          transition: transform 0.3s ease-in-out;
-        }
-        
-        @keyframes slideOut {
-          to {
-            transform: translateX(100vw);
-          }
-        }
-        
-        .slide-out {
-          animation: slideOut 0.3s ease-in-out forwards;
-        }
-      `}</style>
     </div>
   );
 };

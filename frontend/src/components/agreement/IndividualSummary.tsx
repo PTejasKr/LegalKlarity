@@ -148,7 +148,7 @@ import { CheckCircle, AlertTriangle, Lightbulb, FileText } from "lucide-react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-type CitizenSummaryProps = {
+interface IndividualSummaryProps {
   title: string; // e.g. "Marriage Agreement Summary"
   about: string;
   benefits: string[];
@@ -163,7 +163,7 @@ type CitizenSummaryProps = {
   };
   suggestions: string[];
   analogy: string;
-};
+}
 
 export default function IndividualSummary({ aiRawOutput }: { aiRawOutput: IndividualSummaryProps }) {
   return (
@@ -196,8 +196,8 @@ export default function IndividualSummary({ aiRawOutput }: { aiRawOutput: Indivi
           </h2>
           {aiRawOutput.benefits && aiRawOutput.benefits.length > 0 ? (
             <ul className="list-disc ml-6 space-y-1 text-gray-700">
-              {aiRawOutput.benefits.map((b, i) => (
-                <li key={i}>{b}</li>
+              {aiRawOutput.benefits.map((benefit: string, i: number) => (
+                <li key={i}>{benefit}</li>
               ))}
             </ul>
           ) : (
@@ -212,8 +212,8 @@ export default function IndividualSummary({ aiRawOutput }: { aiRawOutput: Indivi
           </h2>
           {aiRawOutput.risks && aiRawOutput.risks.length > 0 ? (
             <ul className="list-disc ml-6 space-y-1 text-gray-700">
-              {aiRawOutput.risks.map((r, i) => (
-                <li key={i}>{r}</li>
+              {aiRawOutput.risks.map((risk: string, i: number) => (
+                <li key={i}>{risk}</li>
               ))}
             </ul>
           ) : (
@@ -282,8 +282,8 @@ export default function IndividualSummary({ aiRawOutput }: { aiRawOutput: Indivi
         </h2>
         {aiRawOutput.suggestions && aiRawOutput.suggestions.length > 0 ? (
           <ul className="list-disc ml-6 space-y-1 text-gray-700">
-            {aiRawOutput.suggestions.map((s, i) => (
-              <li key={i}>{s}</li>
+            {aiRawOutput.suggestions.map((suggestion: string, i: number) => (
+              <li key={i}>{suggestion}</li>
             ))}
           </ul>
         ) : (

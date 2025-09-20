@@ -1,77 +1,55 @@
 # LegalKlarity - Modern Legal Intelligence Platform
 
-LegalKlarity represents a paradigm shift in legal technology, offering an intuitive, AI-driven platform that transforms how individuals and businesses interact with legal documents. Our innovative approach combines cutting-edge artificial intelligence with human-centered design to create a seamless legal intelligence experience.
+LegalKlarity is an AI-driven platform that transforms how individuals and businesses interact with legal documents. Our innovative approach combines cutting-edge artificial intelligence with human-centered design to create a seamless legal intelligence experience.
 
-## Core Philosophy
-
-LegalKlarity is built on the principle that legal understanding should be accessible, intuitive, and empowering. We've moved beyond traditional document analysis to create a comprehensive legal intelligence ecosystem that adapts to your needs.
-
-## Revolutionary Features
+## Core Features
 
 ### 🧠 Intelligent Legal Insights
-- Context-aware document interpretation powered by advanced Qwen AI
-- Predictive risk modeling with actionable recommendations
-- Dynamic clause analysis with real-time suggestions
+- Context-aware document interpretation powered by advanced Gemini AI
 - Smart document summarization with key point extraction
+- Dynamic clause analysis with real-time suggestions
 
 ### 🎛️ Interactive Legal Workspace
 - Drag-and-drop document organization
-- Visual contract mapping and relationship diagrams
 - Customizable dashboard with personalized insights
 - One-click legal template generation
 
 ### 🌐 Global Legal Intelligence
 - Multi-jurisdiction legal context awareness
 - Cross-border compliance checking
-- International contract standard alignment
-- Real-time regulatory update notifications
 
 ### 🤝 Collaborative Legal Ecosystem
 - Role-based access control for teams
-- Integrated legal communication channels
 - Version-controlled document collaboration
-- Expert network connection for specialized advice
 
 ### 📱 Adaptive Interface Experience
 - AI-personalized user interface
-- Voice, touch, and gesture-based interactions
 - Progressive enhancement for all devices
-- Offline capability with intelligent syncing
 
 ## Technology Stack
 
 ### Frontend Architecture
-- React 18 with TypeScript for robust component development
-- Modern CSS-in-JS styling with Emotion for dynamic theming
-- Zustand for lightweight state management
-- Firebase Authentication for secure user management
-- WebRTC for real-time collaborative features
-- Web Speech API enhanced with custom voice processing
+- React 18 with TypeScript
+- Zustand for state management
+- Firebase Authentication
 
 ### Intelligent Backend
-- Node.js with Fastify for high-performance API delivery
-- Firebase Admin SDK for scalable authentication and data management
-- Distributed Qwen AI microservices for specialized legal processing
-- Google Cloud Speech-to-Text with custom legal vocabulary models
-- Advanced text-to-speech with natural language processing
-- PostgreSQL with vector extensions for intelligent document storage
+- Node.js with Fastify
+- Firebase Admin SDK
+- Distributed Gemini AI microservices
 
 ### Advanced AI/ML Infrastructure
-- Python-based microservices architecture with FastAPI
-- Specialized Qwen AI models fine-tuned for legal domain expertise
-- Custom transformer architectures for legal language understanding
-- Dynamic risk assessment algorithms with continuous learning
-- Comprehensive legal knowledge graphs with relationship mapping
-- Federated learning capabilities for privacy-preserving improvements
+- Python-based microservices with FastAPI
+- Specialized Gemini AI models
 
 ## Getting Started
 
 ### Prerequisites
 - Node.js (v16 or higher)
-- Python (v3.8 or higher)
+- Python (3.8 or higher)
 - Firebase account
 - Google Cloud account
-- Qwen API key
+- Gemini API key
 
 ### Installation
 
@@ -94,7 +72,7 @@ LegalKlarity is built on the principle that legal understanding should be access
 
 ### Environment Setup
 
-Create `.env` files in each directory with the required configuration:
+Create `.env` files in each directory by copying the `.env.example` files and filling in your actual values:
 
 **Frontend (.env):**
 ```env
@@ -122,7 +100,7 @@ GEMINI_API_KEY=your-gemini-api-key
 
 1. Start the AI service:
    ```bash
-   cd model
+   cd ai_model
    python app.py
    ```
 
@@ -138,96 +116,6 @@ GEMINI_API_KEY=your-gemini-api-key
    npm run dev
    ```
 
-## Modern Project Architecture
-
-```
-LegalKlarity/
-├── frontend/                    # Modern React application
-│   ├── src/
-│   │   ├── components/          # Modular UI components with atomic design
-│   │   ├── layouts/             # Responsive layout systems
-│   │   ├── features/            # Feature-based module organization
-│   │   ├── hooks/               # Custom React hooks
-│   │   ├── services/            # API service integrations
-│   │   ├── store/               # State management with Zustand
-│   │   ├── utils/               # Utility functions
-│   │   ├── assets/              # Static assets (images, icons, fonts)
-│   │   └── themes/              # Design system and theming
-│   └── public/                  # Public assets and static files
-├── backend/                     # High-performance backend services
-│   ├── api/                     # RESTful API endpoints
-│   │   ├── controllers/         # Business logic handlers
-│   │   ├── middleware/          # Custom middleware
-│   │   ├── routes/              # API route definitions
-│   │   └── validation/          # Request validation schemas
-│   ├── services/                # Business logic services
-│   │   ├── ai/                  # AI service integrations
-│   │   ├── auth/                # Authentication services
-│   │   ├── data/                # Data processing services
-│   │   └── notifications/       # Notification systems
-│   ├── models/                  # Data models and schemas
-│   ├── database/                # Database configuration and migrations
-│   └── utils/                   # Backend utility functions
-├── ai-services/                 # Specialized AI microservices
-│   ├── document-analysis/       # Document processing models
-│   ├── legal-reasoning/         # Legal logic engines
-│   ├── risk-assessment/         # Risk evaluation systems
-│   ├── knowledge-graphs/        # Legal knowledge representations
-│   └── natural-language/        # NLP processing pipelines
-└── infrastructure/              # Deployment and configuration
-    ├── kubernetes/              # Container orchestration
-    ├── terraform/               # Infrastructure as code
-    └── monitoring/              # Observability and logging
-```
-
-## Strategic Development Vision
-
-### Phase 1: Foundation Platform (Completed)
-- ✅ Intelligent legal document processing with Qwen AI
-- ✅ Voice-enabled legal interaction systems
-- ✅ Collaborative legal workspace environment
-- ✅ Adaptive interface with responsive design
-- ✅ Global legal context integration
-
-### Phase 2: Intelligence Enhancement
-- 正在进行 Smart legal template ecosystem
-- 正在进行 Predictive legal risk modeling
-- 正在进行 Advanced compliance automation
-- 正在进行 Legal relationship visualization
-- 正在进行 Personalized legal recommendations
-
-### Phase 3: Ecosystem Expansion
-- 🔲 Multi-jurisdiction legal intelligence
-- 🔲 Integrated legal expert network
-- 🔲 Advanced natural language querying
-- 🔲 Blockchain-based legal verification
-- 🔲 Quantum-resistant security protocols
-
-### Phase 4: Future Innovation
-- 🔲 Augmented reality legal visualization
-- 🔲 Voice-activated legal assistant
-- 🔲 Cross-platform legal synchronization
-- 🔲 AI-powered legal outcome prediction
-- 🔲 Ethical AI governance framework
-
-## Contributing
-
-We welcome contributions to LegalKlarity! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-
-For questions, suggestions, or support, please contact the development team.
-
----
-
-*LegalKlarity - Making legal documents accessible to everyone through the power of AI.*

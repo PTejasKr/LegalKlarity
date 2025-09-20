@@ -1,96 +1,38 @@
-# Dependencies
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node modules
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
 
-# Production
-/dist/
-/build/
+# Build outputs
+dist/
+build/
+out/
 
-# Logs
-logs
+# Log files
 *.log
 
-# Environment files
-.env*
-!.env.example
+# OS generated files
+Thumbs.db
+.DS_Store
+.DS_Store?
 
-# IDE and editor files
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
-.DS_Store
-Thumbs.db
 
-# OS generated files
-.DS_Store?
-ehthumbs.db
-Icon?
-Thumbs.db
+# Firebase service account keys
+*serviceAccountKey.json
+*firebase-adminsdk*.json
 
-# Firebase files
-*.json
-
-# AI model files
-ai_model/
-ai_model/data/
-ai_model/model/
-
-# Development logs and documentation
-DEBUG_PROGRESS.md
-DEVELOPMENT_PROGRESS.md
-FIXES_SUMMARY.md
-MOCK_API_IMPLEMENTATION.md
-QWEN.md
-README_KYT.md
-ROOT_CAUSE_ANALYSIS.md
-
-# Security files
-SECURITY.md
-
-# Backend specific
-backend/.env
-backend/dist/
-backend/build/
-backend/*.log
-backend/src/db/serviceAccountKey.json
-backend/*firebase-adminsdk*.json
-
-# Frontend specific
-frontend/.env
-frontend/dist/
-frontend/build/
-frontend/*.log
-frontend/public/logo2.png
-frontend/dist/logo2.png
-frontend/dist/Introduction.mp4
-frontend/.firebase/
-frontend/node_modules/.tmp/
-
-# Miscellaneous
+# Temporary files
 *.tmp
 *.temp
-.tmp/
-.temp/
 
-# Batch files
-*.bat
-start_all.bat
-
-# AI/ML files
-*.pkl
-*.h5
-*.model
-
-# Qwen files
-.qwen/
-
-# GitHub files
-.github/
-
-# Temp files
-backend/public/temp/
+# Backup files
+*.bak
+*.backup

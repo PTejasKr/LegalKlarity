@@ -1,5 +1,38 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment files
 .env
-dist
-/src/db/serviceAccountKey.json
-*.json
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+out/
+
+# Log files
+*.log
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.DS_Store?
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Firebase service account keys
+src/db/serviceAccountKey.json
+legalklarity-firebase-adminsdk-fbsvc-554b402110.json
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
