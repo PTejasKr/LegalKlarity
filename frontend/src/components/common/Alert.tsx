@@ -19,10 +19,10 @@ const Alert: React.FC<AlertProps> = ({
   const baseClasses = 'rounded-lg p-4 relative';
   
   const variantClasses = {
-    info: 'bg-blue-50 text-blue-800',
-    success: 'bg-green-50 text-green-800',
-    warning: 'bg-yellow-50 text-yellow-800',
-    error: 'bg-red-50 text-red-800',
+    info: 'bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200',
+    success: 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-200',
+    warning: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200',
+    error: 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-200',
   };
   
   const iconClasses = 'h-5 w-5';
@@ -54,7 +54,7 @@ const Alert: React.FC<AlertProps> = ({
           <div className="ml-4 flex-shrink-0">
             <button
               type="button"
-              className="inline-flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="inline-flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
               onClick={onClose}
             >
               <X className="h-5 w-5" />

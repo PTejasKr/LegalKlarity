@@ -115,22 +115,22 @@ export default function CollaborationPanel() {
     <div className="flex h-full">
       {/* Document View Area */}
       <div 
-        className="flex-grow relative bg-gray-50 overflow-hidden"
+        className="flex-grow relative bg-gray-50 overflow-hidden dark:bg-slate-900"
         onMouseMove={handleMouseMove}
       >
         {/* Simulated Document */}
-        <div className="absolute inset-0 bg-white m-4 rounded-lg shadow-lg p-8 overflow-auto">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Sample Legal Agreement</h1>
-          <p className="text-gray-600 mb-4">
+        <div className="absolute inset-0 bg-white m-4 rounded-lg shadow-lg p-8 overflow-auto dark:bg-slate-800">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6 dark:text-white">Sample Legal Agreement</h1>
+          <p className="text-gray-600 mb-4 dark:text-slate-300">
             This Agreement is made and entered into as of the date of acceptance by and between the parties listed below.
           </p>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 mb-4 dark:text-slate-300">
             1. <span className="font-semibold">Services</span>. The Service Provider agrees to perform the services described in Exhibit A.
           </p>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 mb-4 dark:text-slate-300">
             2. <span className="font-semibold">Term</span>. This Agreement shall commence on the Effective Date and continue for a period of one (1) year.
           </p>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 mb-4 dark:text-slate-300">
             3. <span className="font-semibold">Payment</span>. The Client agrees to pay the Service Provider the fees set forth in Exhibit B.
           </p>
           {/* Add more content as needed */}
@@ -146,7 +146,7 @@ export default function CollaborationPanel() {
             onMouseLeave={() => setHoveredUser(null)}
           >
             {hoveredUser === user.id && (
-              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap dark:bg-slate-700">
                 {user.name || 'Anonymous User'}
               </div>
             )}
@@ -167,28 +167,28 @@ export default function CollaborationPanel() {
 
       {/* Collaboration Panel */}
       {isPanelOpen && (
-        <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
-          <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-800">Collaboration</h2>
+        <div className="w-80 bg-white border-l border-gray-200 flex flex-col dark:bg-slate-800 dark:border-slate-700">
+          <div className="p-4 border-b border-gray-200 flex justify-between items-center dark:border-slate-700">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Collaboration</h2>
             <button
               onClick={() => setIsPanelOpen(false)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-300"
             >
               <X size={20} />
             </button>
           </div>
 
           {/* Online Users */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-200 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-3">
-              <Users size={18} className="text-gray-600" />
-              <h3 className="font-medium text-gray-800">Online Users ({users.length})</h3>
+              <Users size={18} className="text-gray-600 dark:text-slate-400" />
+              <h3 className="font-medium text-gray-800 dark:text-white">Online Users ({users.length})</h3>
             </div>
             <div className="space-y-2">
               {users.map(user => (
                 <div key={user.id} className="flex items-center gap-2">
                   <div className={`w-3 h-3 ${user.color || 'bg-blue-500'} rounded-full`}></div>
-                  <span className="text-sm text-gray-700">{user.name || 'Anonymous User'}</span>
+                  <span className="text-sm text-gray-700 dark:text-slate-300">{user.name || 'Anonymous User'}</span>
                 </div>
               ))}
             </div>
@@ -196,20 +196,22 @@ export default function CollaborationPanel() {
 
           {/* Comments */}
           <div className="flex-grow overflow-hidden flex flex-col">
-            <div className="p-4 border-b border-gray-200">
-              <h3 className="font-medium text-gray-800 mb-3">Comments</h3>
+            <div className="p-4 border-b border-gray-200 dark:border-slate-700">
+              <h3 className="font-medium text-gray-800 mb-3 dark:text-white">Comments</h3>
+            </div>
+            <div className="p-4 border-t border-gray-200 dark:border-slate-700">
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Add a comment..."
-                  className="flex-grow px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-grow px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
                 />
                 <button
                   onClick={handleAddComment}
-                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700"
                 >
                   Send
                 </button>
@@ -217,18 +219,18 @@ export default function CollaborationPanel() {
             </div>
             <div className="flex-grow overflow-y-auto">
               {comments.map(comment => (
-                <div key={comment.id} className="p-4 border-b border-gray-100 hover:bg-gray-50">
+                <div key={comment.id} className="p-4 border-b border-gray-100 hover:bg-gray-50 dark:border-slate-700 dark:hover:bg-slate-700">
                   <div className="flex justify-between items-start mb-1">
-                    <span className="font-medium text-sm text-gray-800">{comment.userName}</span>
-                    <span className="text-xs text-gray-500">
+                    <span className="font-medium text-sm text-gray-800 dark:text-white">{comment.userName}</span>
+                    <span className="text-xs text-gray-500 dark:text-slate-400">
                       {new Date(comment.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-700">{comment.text}</p>
+                  <p className="text-sm text-gray-700 dark:text-slate-300">{comment.text}</p>
                 </div>
               ))}
               {comments.length === 0 && (
-                <div className="p-4 text-center text-gray-500">
+                <div className="p-4 text-center text-gray-500 dark:text-slate-400">
                   No comments yet. Be the first to add one!
                 </div>
               )}
@@ -241,9 +243,9 @@ export default function CollaborationPanel() {
       {!isPanelOpen && (
         <button
           onClick={() => setIsPanelOpen(true)}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white border border-gray-200 rounded-l-lg p-2 shadow-md hover:bg-gray-50"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white border border-gray-200 rounded-l-lg p-2 shadow-md hover:bg-gray-50 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700"
         >
-          <MessageCircle size={20} className="text-gray-600" />
+          <MessageCircle size={20} className="text-gray-600 dark:text-slate-400" />
         </button>
       )}
     </div>

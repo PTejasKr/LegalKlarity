@@ -3,15 +3,21 @@ import admin from 'firebase-admin';
 import path from 'path';
 dotenv.config();
 
-// Use service account key file instead of environment variable
-const serviceAccountPath = path.join(__dirname, 'serviceAccountKey.json');
-const serviceAccount = require(serviceAccountPath);
+let serviceAccount;
+let serviceAccountPath;
 
-// Log the service account for debugging
-console.log("Service Account loaded from file:", serviceAccountPath);
+try {
+    // Use service account key file instead of environment variable
+    serviceAccountPath = path.join(__dirname, 'serviceAccountKey.json');
+    serviceAccount = require(serviceAccountPath);
+    console.log("Service Account loaded from file:", serviceAccountPath);
+} catch (error) {
+    console.log("⚠️  Service account key file not found, running in mock mode");
+    console.error("Service account error:", error);
+}
 
 // Initialize Firebase Admin SDK with default credentials for development
-if (!admin.apps.length) {
+if (serviceAccount && !admin.apps.length) {
     try {
         const connected = admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
@@ -28,6 +34,10 @@ if (!admin.apps.length) {
         console.error("Firebase connection error:", error);
         // In development, we can continue without Firebase
     }
+} else if (!admin.apps.length) {
+    console.log("⚠️  No service account provided, running in mock mode");
+    // Initialize with mock credentials for development
+    // This allows the app to start without a real Firebase connection
 }
 
 

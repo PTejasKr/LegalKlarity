@@ -33,13 +33,13 @@ export default function RiskAssessment() {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 w-full">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Risk Assessment & Compliance</h2>
+    <div className="bg-white rounded-xl shadow-md p-6 w-full dark:bg-slate-800 dark:shadow-slate-800/50">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 dark:text-white">Risk Assessment & Compliance</h2>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Risk Scores Bar Chart */}
         <div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Risk Scores by Category</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 dark:text-white">Risk Scores by Category</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -61,10 +61,10 @@ export default function RiskAssessment() {
             </ResponsiveContainer>
           </div>
           <div className="mt-4">
-            <h4 className="font-medium text-gray-800 mb-2">Risk Descriptions</h4>
+            <h4 className="font-medium text-gray-800 mb-2 dark:text-white">Risk Descriptions</h4>
             <ul className="space-y-2">
               {mockRiskData.map((risk, index) => (
-                <li key={index} className="text-sm text-gray-600">
+                <li key={index} className="text-sm text-gray-600 dark:text-slate-300">
                   <span className="font-medium">{risk.category}:</span> {risk.description}
                 </li>
               ))}
@@ -74,7 +74,7 @@ export default function RiskAssessment() {
 
         {/* Compliance Scores Pie Chart */}
         <div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Compliance Scores</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 dark:text-white">Compliance Scores</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -100,12 +100,12 @@ export default function RiskAssessment() {
             </ResponsiveContainer>
           </div>
           <div className="mt-4">
-            <h4 className="font-medium text-gray-800 mb-2">Compliance Insights</h4>
+            <h4 className="font-medium text-gray-800 mb-2 dark:text-white">Compliance Insights</h4>
             <ul className="space-y-2">
-              <li className="text-sm text-gray-600">
+              <li className="text-sm text-gray-600 dark:text-slate-300">
                 <span className="font-medium">Overall Compliance Score:</span> 80%
               </li>
-              <li className="text-sm text-gray-600">
+              <li className="text-sm text-gray-600 dark:text-slate-300">
                 <span className="font-medium">Recommendation:</span> Focus on improving Data Privacy compliance
               </li>
             </ul>
@@ -115,29 +115,29 @@ export default function RiskAssessment() {
 
       {/* Risk Mitigation Suggestions */}
       <div className="mt-8">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">Risk Mitigation Suggestions</h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-4 dark:text-white">Risk Mitigation Suggestions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-medium text-blue-800 mb-2">Financial Risk</h4>
-            <p className="text-sm text-blue-700">
+          <div className="bg-blue-50 p-4 rounded-lg dark:bg-blue-900/30">
+            <h4 className="font-medium text-blue-800 mb-2 dark:text-blue-300">Financial Risk</h4>
+            <p className="text-sm text-blue-700 dark:text-blue-200">
               Clarify all fee structures and payment conditions. Consider adding a cap on variable interest rates.
             </p>
           </div>
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            <h4 className="font-medium text-yellow-800 mb-2">Legal Risk</h4>
-            <p className="text-sm text-yellow-700">
+          <div className="bg-yellow-50 p-4 rounded-lg dark:bg-yellow-900/30">
+            <h4 className="font-medium text-yellow-800 mb-2 dark:text-yellow-300">Legal Risk</h4>
+            <p className="text-sm text-yellow-700 dark:text-yellow-200">
               Define clear termination conditions and notice periods. Add dispute resolution clauses.
             </p>
           </div>
-          <div className="bg-green-50 p-4 rounded-lg">
-            <h4 className="font-medium text-green-800 mb-2">Operational Risk</h4>
-            <p className="text-sm text-green-700">
+          <div className="bg-green-50 p-4 rounded-lg dark:bg-green-900/30">
+            <h4 className="font-medium text-green-800 mb-2 dark:text-green-300">Operational Risk</h4>
+            <p className="text-sm text-green-700 dark:text-green-200">
               Establish detailed service level agreements (SLAs) with specific performance metrics.
             </p>
           </div>
-          <div className="bg-purple-50 p-4 rounded-lg">
-            <h4 className="font-medium text-purple-800 mb-2">Reputational Risk</h4>
-            <p className="text-sm text-purple-700">
+          <div className="bg-purple-50 p-4 rounded-lg dark:bg-purple-900/30">
+            <h4 className="font-medium text-purple-800 mb-2 dark:text-purple-300">Reputational Risk</h4>
+            <p className="text-sm text-purple-700 dark:text-purple-200">
               Implement stronger data protection measures and obtain explicit consent for data usage.
             </p>
           </div>
