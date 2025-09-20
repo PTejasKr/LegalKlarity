@@ -40,6 +40,10 @@ def get_classifier():
             "zero-shot-classification",
             model="valhalla/distilbart-mnli-12-3",
             device=-1  # CPU
+        )
+    return _classifier
+            model="valhalla/distilbart-mnli-12-3",
+            device=-1  # CPU
         # Section cues to check for agreements
 
 POSITIVE_LABELS = [
