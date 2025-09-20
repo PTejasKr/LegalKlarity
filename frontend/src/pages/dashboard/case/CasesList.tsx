@@ -28,16 +28,17 @@ const CasesList: React.FC = () => {
     const [selectedCase, setSelectedCase] = useState<any | null>(null);
     const [detailLoading, setDetailLoading] = useState(false);
 
-    const handleSearch = async () => {
+    const handleSearch = async (searchQuery?: string) => {
         setLoading(true);
         setSelectedCase(null); // Hide detail on new search
-        if (!query || query.trim() === "") {
+        const queryToUse = searchQuery || query;
+        if (!queryToUse || queryToUse.trim() === "") {
             setLoading(false);
             toast.error("Please enter a search query.");
             return;
         }
         try {
-            const response: any = await dispatch(searchCaseAsync(query)).unwrap();
+            const response: any = await dispatch(searchCaseAsync(queryToUse)).unwrap();
 
             if (response?.statusCode === 200 || response?.success === true) {
                 setResults(response.data);
@@ -124,7 +125,7 @@ const CasesList: React.FC = () => {
                         </div>
                         <div className="mt-4 flex justify-center">
                             <button
-                                onClick={handleSearch}
+                                onClick={() => handleSearch()}
                                 disabled={loading}
                                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 dark:from-primary-700 dark:to-indigo-700 dark:hover:from-primary-600 dark:hover:to-indigo-600 dark:focus:ring-offset-slate-900"
                             >
@@ -219,10 +220,7 @@ const CasesList: React.FC = () => {
                                         {['Constitutional Law', 'Criminal Law', 'Civil Law', 'Corporate Law'].map((topic) => (
                                             <button
                                                 key={topic}
-                                                onClick={() => {
-                                                    setQuery(topic);
-                                                    setTimeout(() => handleSearch(), 100);
-                                                }}
+                                                onClick={() => handleSearch(topic)}
                                                 className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600 dark:focus:ring-offset-slate-900"
                                             >
                                                 {topic}
