@@ -1,171 +1,44 @@
-import io
-import re
-import pdfplumber
-import docx
-import pytesseract
-import fitz
-from PIL import Image
-from transformers import pipeline
-from flask import Flask, request, jsonify, send_file
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
+"""
+LEGAL DOCUMENT ANALYZER INTEGRATION REFERENCE
+============================================
+
+This file demonstrates how to integrate the Legal Document Analyzer features 
+into the existing LegalKlarity content analyzer to provide enhanced document analysis.
+
+Key enhancements from Legal Document Analyzer:
+1. Comprehensive 12-category legal document analysis
+2. Structured JSON response for consistent data handling
+3. Interactive document chat functionality
+4. Better prompt engineering for more accurate AI responses
+5. Tabbed interface organization for better UX
+
+Integration points with existing LegalKlarity:
+1. Replace basic document extraction with comprehensive analysis
+2. Enhance agreement summary with additional categories
+3. Add chat functionality to existing dashboard
+4. Improve data structures for better frontend display
+"""
+
+# Required imports (add to existing imports)
 import json
-import os
+import textwrap
 from datetime import datetime
+import google.cloud.aiplatform as aiplatform
+from vertexai.generative_models import GenerativeModel, Part
 
-# Google Cloud Vertex AI imports for enhanced analysis
-try:
-    import vertexai
-    from vertexai.generative_models import GenerativeModel, Part
-    VERTEX_AI_AVAILABLE = True
-except ImportError:
-    VERTEX_AI_AVAILABLE = False
-    print("Vertex AI not available. Using fallback analysis.")
+# Configuration (add to environment variables)
+GOOGLE_CLOUD_PROJECT = "your-google-cloud-project-id"  # Add to .env
+GOOGLE_CLOUD_LOCATION = "us-central1"  # Add to .env
 
-# Flask app
-app = Flask(__name__)
+# Initialize Vertex AI (add after Flask app initialization)
+def initialize_vertex_ai():
+    """Initialize Vertex AI with project configuration"""
+    aiplatform.init(
+        project=GOOGLE_CLOUD_PROJECT,
+        location=GOOGLE_CLOUD_LOCATION
+    )
 
-# Load environment variables
-GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-google_cloud_project")
-GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
-
-# Initialize Vertex AI if available
-if VERTEX_AI_AVAILABLE:
-    try:
-        vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=GOOGLE_CLOUD_LOCATION)
-    except Exception as e:
-        print(f"Failed to initialize Vertex AI: {e}")
-        VERTEX_AI_AVAILABLE = False
-
-_classifier = None
-def get_classifier():
-    global _classifier
-    if _classifier is None:
-        _classifier = pipeline(
-            "zero-shot-classification",
-            model="valhalla/distilbart-mnli-12-3",
-            device=-1  # CPU
-        )
-    return _classifier
-
-# Section cues to check for agreements
-
-POSITIVE_LABELS = [
-    "agreement", "legal contract", "rental agreement", "lease agreement",
-    "service agreement", "tenant-landlord agreement", "terms and conditions",
-    "offer letter", "internship agreement", "employment contract",
-    "student agreement", "job offer", "internship terms"
-]
-
-
-SECTION_CUES = [
-    "agreement", "security deposit", "rental period", "payment terms",
-    "termination", "arbitration", "jurisdiction",
-    "witness", "signatory", "governing law", "parties", "definitions",
-    "probation period", "internship duration", "performance", 
-    "salary", "compensation", "notice period", "work expectations",
-    "attendance", "leaves", "certificate", "offer letter"
-]
-
-# Helpers
-def safe_join_text(parts):
-    return "\n".join([p for p in parts if p])
-
-def chunk_text(text, max_words=300, max_chunks=10):
-    words = text.split()
-    chunks = [" ".join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
-    return chunks[:max_chunks]
-
-def heuristic_score(text):
-    t = (text or "").lower()
-    found = sum(1 for k in SECTION_CUES if re.search(r"\b" + re.escape(k) + r"\b", t))
-    return found / max(1, len(SECTION_CUES))
-
-def classify_agreement(text):
-    details = {
-        "chunks": 0,
-        "votes": 0,
-        "vote_ratio": 0.0,
-        "heuristic": 0.0,
-        "avg_chunk_score": 0.0,
-        "reason": ""
-    }
-    if not text.strip():
-        details["reason"] = "empty_text"
-        return False, details
-    chunks = chunk_text(text, max_words=300, max_chunks=10)
-    details["chunks"] = len(chunks)
-    votes, per_chunk_scores = 0, []
-    CHUNK_THRESHOLD = 0.5
-    for ch in chunks:
-        try:
-            classifier = get_classifier()
-            res = classifier(
-                ch,
-                candidate_labels=POSITIVE_LABELS,
-                multi_label=True,
-                hypothesis_template="This text is about {}."
-            )
-            best = max(res["scores"]) if res["scores"] else 0.0
-        except Exception as e:
-            print(f"Model error: {e}")
-            best = 0.0
-        per_chunk_scores.append(best)
-        if best >= CHUNK_THRESHOLD:
-            votes += 1
-    ratio = votes / len(chunks)
-    heur = heuristic_score(text)
-    details.update({
-        "votes": votes,
-        "vote_ratio": round(ratio, 3),
-        "heuristic": round(heur, 3),
-        "avg_chunk_score": round(sum(per_chunk_scores) / max(1, len(per_chunk_scores)), 3)
-    })
-    accept = (ratio >= 0.4) or (heur >= 0.4)
-    if not accept:
-        details["reason"] = "low_confidence"
-    return accept, details
-
-# File extraction
-def extract_pdf(file_stream):
-    try:
-        file_stream.seek(0)
-        with pdfplumber.open(file_stream) as pdf:
-            return safe_join_text([p.extract_text() for p in pdf.pages])
-    except Exception as e:
-        print(f"PDF extract error: {e}")
-        try:
-            file_stream.seek(0)
-            doc = fitz.open(stream=file_stream.read(), filetype="pdf")
-            texts = []
-            for p in doc:
-                pix = p.get_pixmap(dpi=200)
-                img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-                texts.append(pytesseract.image_to_string(img))
-            return "\n".join(texts)
-        except Exception as e2:
-            print(f"PDF OCR error: {e2}")
-            return ""
-
-def extract_docx(file_stream):
-    try:
-        file_stream.seek(0)
-        doc = docx.Document(io.BytesIO(file_stream.read()))
-        return "\n".join(p.text for p in doc.paragraphs if p.text)
-    except Exception as e:
-        print(f"DOCX extract error: {e}")
-        return ""
-
-def extract_image(file_stream):
-    try:
-        file_stream.seek(0)
-        img = Image.open(file_stream).convert("RGB")
-        return pytesseract.image_to_string(img)
-    except Exception as e:
-        print(f"Image extract error: {e}")
-        return ""
-
-# Enhanced document analysis function
+# Enhanced document analysis function (replace or add to existing functions)
 def analyze_legal_document(text, document_type=None):
     """
     Comprehensive legal document analysis using Gemini AI
@@ -181,10 +54,6 @@ def analyze_legal_document(text, document_type=None):
     # Auto-detect document type if not provided
     if not document_type:
         document_type = detect_document_type(text)
-    
-    # If Vertex AI is not available, use fallback analysis
-    if not VERTEX_AI_AVAILABLE:
-        return create_fallback_analysis(text, document_type)
     
     # Enhanced prompt engineering for comprehensive analysis
     prompt = f"""
@@ -252,7 +121,7 @@ def analyze_legal_document(text, document_type=None):
     }}
     
     Document Text:
-    {text[:30000]}  # Limit to prevent token overflow
+    {text[:50000]}  # Limit to prevent token overflow
     """
     
     try:
@@ -276,7 +145,7 @@ def analyze_legal_document(text, document_type=None):
         
     except json.JSONDecodeError as e:
         # Fallback to basic analysis if JSON parsing fails
-        return create_fallback_analysis(text, document_type)
+        return create_fallback_analysis(text)
     except Exception as e:
         # Return error structure
         return {
@@ -295,7 +164,7 @@ def analyze_legal_document(text, document_type=None):
             "next_steps": []
         }
 
-# Document type detection
+# Document type detection (enhancement to existing classify_agreement)
 def detect_document_type(text):
     """
     Enhanced document type detection
@@ -331,19 +200,15 @@ def detect_document_type(text):
     return "general legal document"
 
 # Fallback analysis function
-def create_fallback_analysis(text, document_type):
+def create_fallback_analysis(text):
     """
     Create basic analysis when AI analysis fails
     
     Returns:
         dict: Basic analysis structure
     """
-    # Extract first few sentences for summary
-    sentences = text.split('.')
-    summary = '. '.join(sentences[:3]) + '.' if len(sentences) > 3 else text[:500]
-    
     return {
-        "summary": summary,
+        "summary": text[:500] + "..." if len(text) > 500 else text,
         "key_terms": [],
         "main_clauses": [],
         "critical_dates": [],
@@ -369,10 +234,6 @@ def chat_about_document(text, question):
     Returns:
         str: AI-generated answer
     """
-    # If Vertex AI is not available, return a fallback response
-    if not VERTEX_AI_AVAILABLE:
-        return "Chat functionality requires Google Cloud Vertex AI integration."
-    
     prompt = f"""
     Based on the following document, answer the question accurately and concisely.
     
@@ -391,49 +252,7 @@ def chat_about_document(text, question):
     except Exception as e:
         return f"Unable to answer the question due to: {str(e)}"
 
-# Routes
-@app.route("/active", methods=["GET"])
-def active():
-    return "active"
-
-@app.route("/uploads", methods=["POST"])
-def api_upload():
-    if "file" not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
-    file = request.files["file"]
-    if file.filename == "":
-        return jsonify({"error": "No file selected"}), 400
-
-    filename = file.filename.lower()
-    text = ""
-
-    if filename.endswith(".pdf"):
-        text = extract_pdf(file.stream)
-    elif filename.endswith(".docx"):
-        text = extract_docx(file.stream)
-    elif filename.endswith((".png", ".jpg", ".jpeg")):
-        text = extract_image(file.stream)
-    else:
-        return jsonify({"error": "Unsupported file type"}), 400
-
-    is_ok, details = classify_agreement(text)
-
-    if not is_ok:
-        return jsonify({
-            "error": "Rejected: Not a valid agreement.",
-            "details": details
-        }), 400
-
-    # Perform enhanced analysis
-    analysis = analyze_legal_document(text)
-    
-    return jsonify({
-        "filename": file.filename,
-        "extracted_text": text,
-        "analysis": analysis,
-        "timestamp": datetime.now().isoformat()
-    })
-
+# Enhanced Flask route for document analysis (replace existing /uploads)
 @app.route("/enhanced_analysis", methods=["POST"])
 def enhanced_document_analysis():
     """
@@ -477,6 +296,7 @@ def enhanced_document_analysis():
         "timestamp": datetime.now().isoformat()
     })
 
+# Document chat endpoint
 @app.route("/chat", methods=["POST"])
 def document_chat():
     """
@@ -497,29 +317,129 @@ def document_chat():
         "timestamp": datetime.now().isoformat()
     })
 
-@app.route("/export/pdf", methods=["POST"])
-def export_pdf():
-    text = request.form.get("text", "")
-    output = io.BytesIO()
-    doc = SimpleDocTemplate(output)
-    styles = getSampleStyleSheet()
-    story = [Paragraph(line, styles["Normal"]) for line in text.split("\n")]
-    doc.build(story)
-    output.seek(0)
-    return send_file(output, as_attachment=True, download_name="output.pdf")
+# Example of how to integrate with LegalKlarity's existing structure
+def integrate_with_legalklarity(existing_text, target_group):
+    """
+    Integration function to work with LegalKlarity's existing target groups
+    
+    Args:
+        existing_text (str): Document text from existing extraction
+        target_group (str): LegalKlarity target group (individual, enterprise, institutional)
+    
+    Returns:
+        dict: Analysis formatted for LegalKlarity's frontend
+    """
+    
+    # Get comprehensive analysis
+    full_analysis = analyze_legal_document(existing_text)
+    
+    # Format based on target group
+    if target_group == "individual":
+        return format_for_individual(full_analysis)
+    elif target_group == "enterprise":
+        return format_for_enterprise(full_analysis)
+    elif target_group == "institutional":
+        return format_for_institutional(full_analysis)
+    else:
+        return full_analysis
 
-@app.route("/export/docx", methods=["POST"])
-def export_docx():
-    text = request.form.get("text", "")
-    output = io.BytesIO()
-    d = docx.Document()
-    for line in text.split("\n"):
-        d.add_paragraph(line)
-    d.save(output)
-    output.seek(0)
-    return send_file(output, as_attachment=True, download_name="output.docx")
+def format_for_individual(analysis):
+    """
+    Format analysis for individual users (citizens)
+    """
+    return {
+        "title": f"Legal Document Analysis: {analysis.get('summary', '')[:50]}...",
+        "about": analysis.get("summary", ""),
+        "benefits": [],  # Extract positive aspects
+        "risks": [risk["description"] for risk in analysis.get("risks", [])],
+        "clarity": {
+            "score": 7,  # Calculate based on document complexity
+            "comment": "Document has been analyzed for clarity"
+        },
+        "fairness": {
+            "score": 6,  # Calculate based on identified risks
+            "comment": "Review risks for fairness assessment"
+        },
+        "repaymentDetails": {
+            "emiAmount": "N/A",
+            "totalRepayment": "N/A", 
+            "interestExtra": "N/A",
+            "note": "See obligations section"
+        },
+        "suggestions": analysis.get("recommendations", []),
+        "analogy": "This document creates legal obligations between parties. See key terms and obligations."
+    }
 
-if __name__ == "__main__":
-    import os
-    port = int(os.environ.get("PORT", 8000))
-    app.run(host="0.0.0.0", port=port)
+def format_for_enterprise(analysis):
+    """
+    Format analysis for enterprise users (business owners)
+    """
+    return {
+        "title": f"Business Legal Document Analysis",
+        "about": analysis.get("summary", ""),
+        "clauses": [
+            {"title": "Key Terms", "explanation": str(analysis.get("key_terms", []))},
+            {"title": "Main Clauses", "explanation": str(analysis.get("main_clauses", []))},
+            {"title": "Parties", "explanation": str(analysis.get("parties", []))}
+        ],
+        "financials": {
+            "totalFee": "See obligations",
+            "paymentMilestones": ["See critical dates"],
+            "lateFee": "See main clauses"
+        },
+        "keyComplianceNotes": [issue["regulation"] for issue in analysis.get("compliance_issues", [])],
+        "finalAssessment": {
+            "overallScore": 7,
+            "comment": "Document analyzed with identified risks and recommendations",
+            "recommendations": analysis.get("recommendations", [])
+        }
+    }
+
+def format_for_institutional(analysis):
+    """
+    Format analysis for institutional users (students, young professionals)
+    """
+    return {
+        "title": f"Document Analysis for {analysis.get('jurisdiction', 'your jurisdiction')}",
+        "about": analysis.get("summary", ""),
+        "clauses": [
+            {"title": party["role"], "explanation": f"Party: {party['name']}"} 
+            for party in analysis.get("parties", [])
+        ] + [
+            {"title": "Key Obligations", "explanation": str(analysis.get("obligations", [])[:3])}
+        ],
+        "keyLegalNotes": [issue["regulation"] for issue in analysis.get("compliance_issues", [])],
+        "finalTips": analysis.get("recommendations", [])[:5]
+    }
+
+"""
+INTEGRATION INSTRUCTIONS:
+========================
+
+1. Environment Setup:
+   - Add GOOGLE_CLOUD_PROJECT to your .env file
+   - Add GOOGLE_CLOUD_LOCATION to your .env file
+   - Install required packages: pip install google-cloud-aiplatform
+
+2. Backend Integration:
+   - Add the enhanced analysis functions to your existing app.py
+   - Update Flask routes to include /enhanced_analysis and /chat
+   - Modify existing agreement summary endpoint to use enhanced analysis
+
+3. Frontend Integration:
+   - Update LegalKlarity frontend to call /enhanced_analysis instead of /uploads
+   - Add tabbed interface to display the 12 analysis categories
+   - Implement chat functionality using the /chat endpoint
+   - Modify data structures in Redux/store to handle enhanced analysis data
+
+4. Data Flow:
+   Current: File Upload → Text Extraction → Basic Summary
+   Enhanced: File Upload → Text Extraction → Comprehensive Analysis → Formatted Response
+
+5. Benefits of Integration:
+   - More comprehensive document analysis
+   - Better structured data for frontend display
+   - Interactive document chat functionality
+   - Improved prompt engineering for better AI responses
+   - Enhanced user experience with tabbed organization
+"""
