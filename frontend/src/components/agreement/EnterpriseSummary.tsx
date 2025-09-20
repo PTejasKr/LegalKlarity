@@ -168,43 +168,54 @@ const EnterpriseSummary: React.FC<{ aiRawOutput: ImportedBusinessOutput }> = ({ 
   return (
     <div className="relative">
       {/* Fixed Title */}
-      <div className="sticky top-0 z-10 bg-white pb-2 border-b border-gray-200">
-        <h2 className="text-3xl font-bold text-gray-900 px-8 pt-6 pb-4 w-full">{summaryTitle}</h2>
+      <div className="sticky top-0 z-10 bg-white pb-2 border-b border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+        <h2 className="text-3xl font-bold text-gray-900 px-8 pt-6 pb-4 w-full dark:text-white">
+          {summaryTitle}
+        </h2>
       </div>
       <div className="flex flex-col md:flex-row gap-0">
         {/* Left: Scrollable Content */}
         <div className="md:w-3/4 w-full">
-          <div className="bg-white rounded-2xl p-8 space-y-10 max-h-[600px] overflow-y-auto">
+          <div className="bg-white rounded-2xl p-8 space-y-10 max-h-[600px] overflow-y-auto dark:bg-slate-800">
             {/* About */}
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">About</h3>
-              <p className="text-gray-700 leading-relaxed">{aiRawOutput.about}</p>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2 dark:text-white">
+                About
+              </h3>
+              <p className="text-gray-700 leading-relaxed dark:text-slate-300">
+                {aiRawOutput.about}
+              </p>
             </div>
 
             {/* Clauses */}
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">📑 Clauses</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4 dark:text-white">
+                📑 Clauses
+              </h3>
               <div className="space-y-6">
                 {aiRawOutput.clauses.map((clause, i) => (
-                  <div key={i} className="border-l-4 border-blue-500 pl-4">
-                    <h4 className="text-lg font-semibold text-gray-800">{clause.title}</h4>
-                    <p className="text-gray-600 mb-3">{clause.explanation}</p>
+                  <div key={i} className="border-l-4 border-blue-500 pl-4 dark:border-blue-400">
+                    <h4 className="text-lg font-semibold text-gray-800 dark:text-white">
+                      {clause.title}
+                    </h4>
+                    <p className="text-gray-600 mb-3 dark:text-slate-300">
+                      {clause.explanation}
+                    </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div className="flex items-start gap-2 bg-red-50 p-4 rounded-lg">
-                        <ShieldAlert className="text-red-600 w-6 h-6 mt-1" />
-                        <p className="text-sm leading-relaxed text-red-700">
+                      <div className="flex items-start gap-2 bg-red-50 p-4 rounded-lg dark:bg-red-900/20">
+                        <ShieldAlert className="text-red-600 w-6 h-6 mt-1 dark:text-red-400" />
+                        <p className="text-sm leading-relaxed text-red-700 dark:text-red-300">
                           <b>Risk:</b> {clause.risk}
                         </p>
                       </div>
-                      <div className="flex items-start gap-2 bg-green-50 p-4 rounded-lg">
-                        <Lightbulb className="text-green-600 w-6 h-6 mt-1" />
-                        <p className="text-sm leading-relaxed text-green-700">
+                      <div className="flex items-start gap-2 bg-green-50 p-4 rounded-lg dark:bg-green-900/20">
+                        <Lightbulb className="text-green-600 w-6 h-6 mt-1 dark:text-green-400" />
+                        <p className="text-sm leading-relaxed text-green-700 dark:text-green-300">
                           <b>Improvement:</b> {clause.improvement}
                         </p>
                       </div>
                     </div>
-
                   </div>
                 ))}
               </div>
@@ -212,29 +223,37 @@ const EnterpriseSummary: React.FC<{ aiRawOutput: ImportedBusinessOutput }> = ({ 
 
             {/* Financials */}
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">💰 Financials</h3>
-              <p className="mb-2"><b>Total Fee:</b> {aiRawOutput.financials.totalFee}</p>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4 dark:text-white">
+                💰 Financials
+              </h3>
+              <p className="mb-2 dark:text-slate-300">
+                <b>Total Fee:</b> {aiRawOutput.financials.totalFee}
+              </p>
 
-              <div className="space-y-3 pl-3 border-l-2 border-gray-300">
+              <div className="space-y-3 pl-3 border-l-2 border-gray-300 dark:border-slate-600">
                 {aiRawOutput.financials.paymentMilestones.map((m, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <CheckCircle2 className="text-blue-600 w-5 h-5" />
-                    <span className="text-gray-700">{m}</span>
+                    <CheckCircle2 className="text-blue-600 w-5 h-5 dark:text-blue-400" />
+                    <span className="text-gray-700 dark:text-slate-300">{m}</span>
                   </div>
                 ))}
               </div>
 
-              <p className="mt-3"><b>Late Fee:</b> {aiRawOutput.financials.lateFee}</p>
+              <p className="mt-3 dark:text-slate-300">
+                <b>Late Fee:</b> {aiRawOutput.financials.lateFee}
+              </p>
             </div>
 
             {/* Compliance Notes */}
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">📌 Compliance Notes</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3 dark:text-white">
+                📌 Compliance Notes
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {aiRawOutput.keyComplianceNotes.map((c, i) => (
                   <span 
                     key={i} 
-                    className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full border"
+                    className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full border dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600"
                   >
                     {c}
                   </span>
@@ -243,12 +262,16 @@ const EnterpriseSummary: React.FC<{ aiRawOutput: ImportedBusinessOutput }> = ({ 
             </div>
 
             {/* Final Assessment */}
-            <div className="p-6 rounded-xl bg-gray-50 border">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Final Assessment</h3>
-              <p className="text-gray-700 mt-2">
+            <div className="p-6 rounded-xl bg-gray-50 border dark:bg-slate-700 dark:border-slate-600">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2 dark:text-white">
+                Final Assessment
+              </h3>
+              <p className="text-gray-700 mt-2 dark:text-slate-300">
                 {assessment && assessment.comment
                   ? assessment.comment
-                  : <span className="text-gray-400">No assessment comment available</span>
+                  : <span className="text-gray-400 dark:text-slate-400">
+                      No assessment comment available
+                    </span>
                 }
               </p>
             </div>
@@ -257,21 +280,29 @@ const EnterpriseSummary: React.FC<{ aiRawOutput: ImportedBusinessOutput }> = ({ 
 
         {/* Right: Score & Recommendations */}
         <div className="md:w-1/4 w-full flex-shrink-0">
-          <div className="bg-white shadow rounded-2xl py-6 px-4 flex flex-col items-center mb-6 sticky top-28" style={{ minHeight: 340 }}>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Overall Score</h3>
+          <div className="bg-white shadow rounded-2xl py-6 px-4 flex flex-col items-center mb-6 sticky top-28 dark:bg-slate-800 dark:shadow-slate-800/50" style={{ minHeight: 340 }}>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 dark:text-white">
+              Overall Score
+            </h3>
             {isNew ? (
               <CircularScore score={assessment.overallScore} />
             ) : (
-              <div className="text-gray-400 text-sm mb-4">No score available</div>
+              <div className="text-gray-400 text-sm mb-4 dark:text-slate-400">
+                No score available
+              </div>
             )}
             <div className="mt-6 w-full">
-              <h4 className="text-base font-semibold text-gray-800 mb-2">Recommendations</h4>
-              <ul className="list-disc pl-5 text-gray-700 text-sm space-y-1">
+              <h4 className="text-base font-semibold text-gray-800 mb-2 dark:text-white">
+                Recommendations
+              </h4>
+              <ul className="list-disc pl-5 text-gray-700 text-sm space-y-1 dark:text-slate-300">
                 {isNew && assessment.recommendations.length > 0
                   ? assessment.recommendations.map((rec: string, i: number) => (
                       <li key={i}>{rec}</li>
                     ))
-                  : <li className="text-gray-400">No recommendations available</li>
+                  : <li className="text-gray-400 dark:text-slate-400">
+                      No recommendations available
+                    </li>
                 }
               </ul>
             </div>

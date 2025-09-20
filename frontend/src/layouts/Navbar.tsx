@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { getCurrentUserAsync } from "../store/authSlice";
 import { Menu, X, User, LogOut, Home, FileText } from "lucide-react";
+import ThemeToggle from "../components/ThemeToggle";
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
@@ -32,7 +33,7 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white dark:bg-slate-900 shadow-sm dark:shadow-slate-800 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
@@ -41,7 +42,7 @@ const Navbar = () => {
               <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">LK</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">LegalKlarity</span>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">LegalKlarity</span>
             </a>
           </div>
 
@@ -53,7 +54,7 @@ const Navbar = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600"
+                  className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-400"
                 >
                   <item.icon className="h-4 w-4" />
                   <span className="text-sm font-medium">{item.name}</span>
@@ -63,32 +64,35 @@ const Navbar = () => {
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {isAuthenticated ? (
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center space-x-2 text-sm rounded-full focus:outline-none"
                 >
-                  <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <User className="h-4 w-4 text-indigo-600" />
+                  <div className="h-8 w-8 rounded-full bg-indigo-100 dark:bg-slate-800 flex items-center justify-center">
+                    <User className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                   </div>
                 </button>
 
                 {userMenuOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">{user?.displayName || 'User'}</p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 dark:ring-slate-700">
+                    <div className="px-4 py-2 border-b border-gray-100 dark:border-slate-700">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.displayName || 'User'}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">{user?.email}</p>
                     </div>
-                    <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700">
                       Dashboard
                     </a>
-                    <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="/dashboard/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700">
                       Settings
                     </a>
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700 flex items-center"
                     >
                       <LogOut className="h-4 w-4 mr-2" />
                       Sign out
@@ -100,13 +104,13 @@ const Navbar = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => navigate("/login")}
-                  className="text-sm font-medium text-gray-700 hover:text-indigo-600"
+                  className="text-sm font-medium text-gray-700 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-400"
                 >
                   Sign in
                 </button>
                 <button
                   onClick={() => navigate("/register")}
-                  className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
+                  className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition dark:bg-indigo-700 dark:hover:bg-indigo-600"
                 >
                   Get Started
                 </button>
@@ -116,7 +120,7 @@ const Navbar = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-gray-700 hover:text-indigo-600 focus:outline-none"
+              className="md:hidden p-2 rounded-md text-gray-700 hover:text-indigo-600 focus:outline-none dark:text-slate-300 dark:hover:text-indigo-400"
             >
               {mobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -130,7 +134,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden">
+        <div className="md:hidden dark:bg-slate-900">
           <div className="pt-2 pb-3 space-y-1">
             {navigation
               .filter(item => !item.authenticated || isAuthenticated)
@@ -138,38 +142,38 @@ const Navbar = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-indigo-500 hover:text-gray-900"
+                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-indigo-500 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 >
                   {item.name}
                 </a>
               ))}
           </div>
-          <div className="pt-4 pb-3 border-t border-gray-200">
+          <div className="pt-4 pb-3 border-t border-gray-200 dark:border-slate-800">
             {isAuthenticated ? (
               <div className="flex items-center px-4">
                 <div className="flex-shrink-0">
-                  <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <User className="h-5 w-5 text-indigo-600" />
+                  <div className="h-10 w-10 rounded-full bg-indigo-100 dark:bg-slate-800 flex items-center justify-center">
+                    <User className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
                 </div>
                 <div className="ml-3">
-                  <div className="text-base font-medium text-gray-800">{user?.displayName || 'User'}</div>
-                  <div className="text-sm font-medium text-gray-500">{user?.email}</div>
+                  <div className="text-base font-medium text-gray-800 dark:text-white">{user?.displayName || 'User'}</div>
+                  <div className="text-sm font-medium text-gray-500 dark:text-slate-400">{user?.email}</div>
                 </div>
               </div>
             ) : null}
             <div className="mt-3 px-2 space-y-1">
               {isAuthenticated ? (
                 <>
-                  <a href="/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+                  <a href="/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800">
                     Dashboard
                   </a>
-                  <a href="/settings" className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50">
+                  <a href="/dashboard/settings" className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800">
                     Settings
                   </a>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
                   >
                     Sign out
                   </button>
@@ -181,7 +185,7 @@ const Navbar = () => {
                       navigate("/login");
                       setMobileMenuOpen(false);
                     }}
-                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
                   >
                     Sign in
                   </button>
@@ -190,7 +194,7 @@ const Navbar = () => {
                       navigate("/register");
                       setMobileMenuOpen(false);
                     }}
-                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                    className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600"
                   >
                     Get Started
                   </button>

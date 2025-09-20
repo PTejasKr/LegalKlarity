@@ -50,15 +50,15 @@ export default function AgreementProcess() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
             {/* Header */}
-            <div className="bg-white shadow-sm">
+            <div className="bg-white shadow-sm dark:bg-slate-800 dark:shadow-slate-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="text-center">
-                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 dark:text-white">
                             Agreement Process Guide
                         </h1>
-                        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                        <p className="text-lg text-gray-600 max-w-3xl mx-auto dark:text-slate-300">
                             Get step-by-step guidance for drafting, reviewing, and executing legal agreements
                         </p>
                     </div>
@@ -67,11 +67,11 @@ export default function AgreementProcess() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Search Section */}
-                <div className="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-200">
+                <div className="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
                     <div className="max-w-3xl mx-auto">
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Search className="h-5 w-5 text-gray-400" />
+                                <Search className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                             </div>
                             <input
                                 type="text"
@@ -79,14 +79,14 @@ export default function AgreementProcess() {
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Enter agreement type (e.g., Rental Agreement, Employment Contract, Loan Agreement)"
-                                className="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                                className="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                             />
                         </div>
                         <div className="mt-4 flex justify-center">
                             <button
                                 onClick={handleView}
                                 disabled={loading}
-                                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 dark:from-primary-700 dark:to-indigo-700 dark:hover:from-primary-600 dark:hover:to-indigo-600 dark:focus:ring-offset-slate-900"
                             >
                                 {loading ? (
                                     <>
@@ -102,8 +102,8 @@ export default function AgreementProcess() {
                             </button>
                         </div>
                         <div className="mt-4 text-center">
-                            <p className="text-sm text-gray-500">
-                                Examples: <span className="text-gray-700">Rental Agreement, Employment Contract, Loan Agreement, Marriage Contract</span>
+                            <p className="text-sm text-gray-500 dark:text-slate-400">
+                                Examples: <span className="text-gray-700 dark:text-slate-300">Rental Agreement, Employment Contract, Loan Agreement, Marriage Contract</span>
                             </p>
                         </div>
                     </div>
@@ -111,25 +111,25 @@ export default function AgreementProcess() {
 
                 {/* Results */}
                 {loading ? (
-                    <div className="bg-white rounded-xl shadow-sm p-12 border border-gray-200 flex flex-col items-center">
+                    <div className="bg-white rounded-xl shadow-sm p-12 border border-gray-200 flex flex-col items-center dark:bg-slate-800 dark:border-slate-700">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-4"></div>
-                        <p className="text-gray-600">Analyzing agreement process details...</p>
+                        <p className="text-gray-600 dark:text-slate-400">Analyzing agreement process details...</p>
                     </div>
                 ) : showDetails ? (
                     <div className="space-y-6">
                         {/* Process Overview Card */}
-                        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
                             <div className="flex items-start">
                                 <div className="flex-shrink-0">
-                                    <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-blue-100 text-blue-600">
+                                    <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                                         <FileText className="h-6 w-6" />
                                     </div>
                                 </div>
                                 <div className="ml-4">
-                                    <h2 className="text-2xl font-bold text-gray-900">
+                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                                         {query ? `${query} Process` : 'Agreement Process'}
                                     </h2>
-                                    <p className="mt-1 text-gray-600">
+                                    <p className="mt-1 text-gray-600 dark:text-slate-400">
                                         Complete guide with steps, requirements, and resources
                                     </p>
                                 </div>
@@ -138,9 +138,9 @@ export default function AgreementProcess() {
 
                         {/* Process Steps */}
                         {showDetails.processSteps && Array.isArray(showDetails.processSteps) && (
-                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-800 mr-3">
+                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center dark:text-white">
+                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-800 mr-3 dark:bg-blue-900/30 dark:text-blue-400">
                                         1
                                     </span>
                                     Process Steps
@@ -149,12 +149,12 @@ export default function AgreementProcess() {
                                     {showDetails.processSteps.map((step: string, index: number) => (
                                         <div key={index} className="flex">
                                             <div className="flex-shrink-0 mt-1">
-                                                <div className="flex items-center justify-center h-6 w-6 rounded-full bg-gray-200 text-gray-600 text-xs">
+                                                <div className="flex items-center justify-center h-6 w-6 rounded-full bg-gray-200 text-gray-600 text-xs dark:bg-slate-700 dark:text-slate-300">
                                                     {index + 1}
                                                 </div>
                                             </div>
                                             <div className="ml-3">
-                                                <p className="text-gray-700">{step}</p>
+                                                <p className="text-gray-700 dark:text-slate-300">{step}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -164,21 +164,21 @@ export default function AgreementProcess() {
 
                         {/* Required Documents */}
                         {showDetails.requiredDocuments && Array.isArray(showDetails.requiredDocuments) && (
-                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-100 text-green-800 mr-3">
+                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center dark:text-white">
+                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-100 text-green-800 mr-3 dark:bg-green-900/30 dark:text-green-400">
                                         2
                                     </span>
                                     Required Documents
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {showDetails.requiredDocuments.map((doc: string, index: number) => (
-                                        <div key={index} className="flex items-start p-4 bg-gray-50 rounded-lg">
+                                        <div key={index} className="flex items-start p-4 bg-gray-50 rounded-lg dark:bg-slate-700">
                                             <div className="flex-shrink-0 mt-1">
                                                 <div className="h-2 w-2 rounded-full bg-green-500"></div>
                                             </div>
                                             <div className="ml-3">
-                                                <p className="text-gray-700">{doc}</p>
+                                                <p className="text-gray-700 dark:text-slate-300">{doc}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -188,16 +188,16 @@ export default function AgreementProcess() {
 
                         {/* Online Creation Resources */}
                         {showDetails.creationLinks && Array.isArray(showDetails.creationLinks) && (
-                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-purple-100 text-purple-800 mr-3">
+                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center dark:text-white">
+                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-purple-100 text-purple-800 mr-3 dark:bg-purple-900/30 dark:text-purple-400">
                                         3
                                     </span>
                                     Create Agreement Online
                                 </h3>
                                 <div className="space-y-4">
                                     {showDetails.creationLinks.map((link: any, index: number) => (
-                                        <div key={index} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition">
+                                        <div key={index} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition dark:border-slate-600 dark:hover:bg-slate-700">
                                             {link.url && link.url !== 'N/A' ? (
                                                 <a 
                                                     href={link.url} 
@@ -206,18 +206,18 @@ export default function AgreementProcess() {
                                                     className="flex items-center justify-between"
                                                 >
                                                     <div>
-                                                        <h4 className="font-medium text-gray-900">{link.name || link.document}</h4>
+                                                        <h4 className="font-medium text-gray-900 dark:text-white">{link.name || link.document}</h4>
                                                         {link.disclaimer && (
-                                                            <p className="mt-1 text-sm text-gray-500">{link.disclaimer}</p>
+                                                            <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{link.disclaimer}</p>
                                                         )}
                                                     </div>
-                                                    <span className="text-primary-600 text-sm font-medium">Visit →</span>
+                                                    <span className="text-primary-600 text-sm font-medium dark:text-primary-400">Visit →</span>
                                                 </a>
                                             ) : (
                                                 <div>
-                                                    <h4 className="font-medium text-gray-900">{link.name || link.document}</h4>
+                                                    <h4 className="font-medium text-gray-900 dark:text-white">{link.name || link.document}</h4>
                                                     {link.disclaimer && (
-                                                        <p className="mt-1 text-sm text-gray-500 italic">{link.disclaimer}</p>
+                                                        <p className="mt-1 text-sm text-gray-500 italic dark:text-slate-400">{link.disclaimer}</p>
                                                     )}
                                                 </div>
                                             )}
@@ -229,19 +229,19 @@ export default function AgreementProcess() {
 
                         {/* Pricing Information */}
                         {showDetails.priceInfo && Array.isArray(showDetails.priceInfo) && (
-                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 text-amber-800 mr-3">
+                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center dark:text-white">
+                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 text-amber-800 mr-3 dark:bg-amber-900/30 dark:text-amber-400">
                                         4
                                     </span>
                                     Pricing Information
                                 </h3>
-                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 dark:bg-amber-900/20 dark:border-amber-800">
                                     <ul className="space-y-2">
                                         {showDetails.priceInfo.map((priceItem: any, index: number) => (
                                             <li key={index} className="flex items-start">
                                                 <span className="text-amber-500 mr-2">•</span>
-                                                <span className="text-gray-700">
+                                                <span className="text-gray-700 dark:text-slate-300">
                                                     {typeof priceItem === 'string' ? priceItem : `${priceItem.document}: ${priceItem.price}`}
                                                 </span>
                                             </li>
@@ -253,25 +253,25 @@ export default function AgreementProcess() {
 
                         {/* Expert Help */}
                         {showDetails.needExpert && (
-                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-800 mr-3">
+                            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+                                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center dark:text-white">
+                                    <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-800 mr-3 dark:bg-red-900/30 dark:text-red-400">
                                         <AlertCircle className="h-4 w-4" />
                                     </span>
                                     When to Seek Legal Expertise
                                 </h3>
-                                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-4 dark:bg-red-900/20 dark:border-red-800">
                                     {Array.isArray(showDetails.needExpert) ? (
                                         <ul className="space-y-2">
                                             {showDetails.needExpert.map((item: string, index: number) => (
                                                 <li key={index} className="flex items-start">
                                                     <span className="text-red-500 mr-2">•</span>
-                                                    <span className="text-gray-700">{item}</span>
+                                                    <span className="text-gray-700 dark:text-slate-300">{item}</span>
                                                 </li>
                                             ))}
                                         </ul>
                                     ) : (
-                                        <p className="text-gray-700 whitespace-pre-line">{showDetails.needExpert}</p>
+                                        <p className="text-gray-700 whitespace-pre-line dark:text-slate-300">{showDetails.needExpert}</p>
                                     )}
                                 </div>
                             </div>
@@ -281,7 +281,7 @@ export default function AgreementProcess() {
                         <div className="flex flex-col sm:flex-row justify-center gap-4 py-6">
                             <button 
                                 onClick={() => window.print()}
-                                className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600 dark:focus:ring-offset-slate-900"
                             >
                                 <FileText className="mr-2 h-5 w-5" />
                                 Print Guide
@@ -296,7 +296,7 @@ export default function AgreementProcess() {
                                     }) : 
                                     alert("Sharing not supported on this browser.");
                                 }}
-                                className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:from-primary-700 dark:to-indigo-700 dark:hover:from-primary-600 dark:hover:to-indigo-600 dark:focus:ring-offset-slate-900"
                             >
                                 Share Guide
                             </button>
@@ -304,12 +304,12 @@ export default function AgreementProcess() {
                     </div>
                 ) : (
                     // Empty state
-                    <div className="bg-white rounded-xl shadow-sm p-12 border border-gray-200 text-center">
-                        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100">
-                            <FileText className="h-8 w-8 text-blue-600" />
+                    <div className="bg-white rounded-xl shadow-sm p-12 border border-gray-200 text-center dark:bg-slate-800 dark:border-slate-700">
+                        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                            <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                         </div>
-                        <h3 className="mt-4 text-xl font-medium text-gray-900">Find Agreement Processes</h3>
-                        <p className="mt-2 text-gray-500">
+                        <h3 className="mt-4 text-xl font-medium text-gray-900 dark:text-white">Find Agreement Processes</h3>
+                        <p className="mt-2 text-gray-500 dark:text-slate-400">
                             Enter an agreement type above to get step-by-step guidance on how to create, review, and execute legal documents.
                         </p>
                     </div>

@@ -168,7 +168,7 @@ type CitizenSummaryProps = {
 export default function IndividualSummary({ aiRawOutput }: { aiRawOutput: IndividualSummaryProps }) {
   return (
     <motion.div
-      className="border rounded-2xl max-w-6xl mx-auto shadow-sm bg-white p-6 space-y-8 text-gray-800"
+      className="border rounded-2xl max-w-6xl mx-auto shadow-sm bg-white p-6 space-y-8 text-gray-800 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >

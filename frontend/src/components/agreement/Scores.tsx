@@ -16,7 +16,7 @@ const ScoreCircle: React.FC<ScoreProps> = ({ label, score, comment }) => {
     circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="flex items-center gap-4 p-3 rounded-xl border border-gray-200 shadow-sm bg-white">
+    <div className="flex items-center gap-4 p-3 rounded-xl border border-gray-200 shadow-sm bg-white dark:bg-slate-800 dark:border-slate-700">
       <div className="relative">
         <svg
           height={radius * 2}
@@ -47,14 +47,14 @@ const ScoreCircle: React.FC<ScoreProps> = ({ label, score, comment }) => {
           />
         </svg>
         {/* Score in center */}
-        <span className="absolute inset-0 flex items-center justify-center font-semibold text-gray-800">
+        <span className="absolute inset-0 flex items-center justify-center font-semibold text-gray-800 dark:text-white">
           {score}/10
         </span>
       </div>
 
       <div className="flex flex-col">
-        <p className="text-sm font-medium text-gray-900">{label}</p>
-        <p className="text-xs text-gray-600">{comment}</p>
+        <p className="text-sm font-medium text-gray-900 dark:text-white">{label}</p>
+        <p className="text-xs text-gray-600 dark:text-slate-400">{comment}</p>
       </div>
     </div>
   );

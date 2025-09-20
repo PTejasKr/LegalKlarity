@@ -32,24 +32,24 @@ const roles = [
     title: "Enterprise",
     description: "For businesses, corporations, and commercial entities seeking legal solutions.",
     icon: <Building className="w-8 h-8" />,
-    color: "bg-blue-50 text-blue-600 border-blue-200",
-    hoverColor: "hover:bg-blue-100"
+    color: "bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
+    hoverColor: "hover:bg-blue-100 dark:hover:bg-blue-900/50"
   },
   {
     id: "individual",
     title: "Individual",
     description: "For individuals managing personal legal documents and agreements.",
     icon: <User className="w-8 h-8" />,
-    color: "bg-green-50 text-green-600 border-green-200",
-    hoverColor: "hover:bg-green-100"
+    color: "bg-green-50 text-green-600 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
+    hoverColor: "hover:bg-green-100 dark:hover:bg-green-900/50"
   },
   {
     id: "institutional",
     title: "Institutional",
     description: "For educational institutions, NGOs, and organizations managing multiple agreements.",
     icon: <Building2 className="w-8 h-8" />,
-    color: "bg-purple-50 text-purple-600 border-purple-200",
-    hoverColor: "hover:bg-purple-100"
+    color: "bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800",
+    hoverColor: "hover:bg-purple-100 dark:hover:bg-purple-900/50"
   }
 ];
 
@@ -73,7 +73,7 @@ const RoleSelection = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -82,10 +82,10 @@ const RoleSelection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Select Your User Type
             </h1>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-slate-300 max-w-3xl mx-auto">
               Choose the category that best represents you to access personalized legal tools and agreement templates.
             </p>
           </motion.div>
@@ -105,18 +105,18 @@ const RoleSelection = () => {
               }}
             >
               <div 
-                className={`bg-white rounded-xl border-2 p-6 h-full flex flex-col transition-all duration-300 ${role.color.replace('text', 'border')} ${role.hoverColor} shadow-sm hover:shadow-md`}
+                className={`bg-white rounded-xl border-2 p-6 h-full flex flex-col transition-all duration-300 ${role.color.replace('text', 'border')} ${role.hoverColor} shadow-sm hover:shadow-md dark:bg-slate-800 dark:border-slate-700 dark:hover:shadow-slate-800/50`}
               >
                 <div className="flex flex-col h-full">
                   <div className={`w-16 h-16 rounded-full ${role.color} flex items-center justify-center mb-6 mx-auto`}>
                     {role.icon}
                   </div>
                   
-                  <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-3">
                     {role.title}
                   </h3>
                   
-                  <p className="text-sm text-gray-600 text-center mb-6 flex-grow">
+                  <p className="text-sm text-gray-600 dark:text-slate-400 text-center mb-6 flex-grow">
                     {role.description}
                   </p>
                   
@@ -129,7 +129,7 @@ const RoleSelection = () => {
                       {/* Front - Show Examples Button */}
                       <div className="flip-card-front flex flex-col items-center justify-center h-full cursor-pointer">
                         <button 
-                          className="text-sm font-medium text-gray-700 hover:text-gray-900"
+                          className="text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white"
                           onClick={() => handleFlip(role.id)}
                         >
                           Show Examples
@@ -137,21 +137,21 @@ const RoleSelection = () => {
                       </div>
                       
                       {/* Back - Examples Content */}
-                      <div className="flip-card-back bg-gray-50 rounded-lg p-4 h-full">
+                      <div className="flip-card-back bg-gray-50 rounded-lg p-4 h-full dark:bg-slate-700">
                         <div className="h-full flex flex-col">
                           <div className="flex-grow overflow-y-auto">
                             <ul className="space-y-2">
                               {exampleAgreements[role.id].map((doc, i) => (
-                                <li key={i} className="text-sm text-gray-700 flex items-start">
-                                  <span className="text-gray-400 mr-2">•</span>
+                                <li key={i} className="text-sm text-gray-700 dark:text-slate-300 flex items-start">
+                                  <span className="text-gray-400 dark:text-slate-400 mr-2">•</span>
                                   <span>{doc}</span>
                                 </li>
                               ))}
                             </ul>
                           </div>
-                          <div className="mt-3 pt-2 border-t border-gray-200">
+                          <div className="mt-3 pt-2 border-t border-gray-200 dark:border-slate-600">
                             <button 
-                              className="text-xs font-medium text-gray-600 hover:text-gray-900 w-full text-center"
+                              className="text-xs font-medium text-gray-600 hover:text-gray-900 dark:text-slate-400 dark:hover:text-white w-full text-center"
                               onClick={() => handleFlip(role.id)}
                             >
                               Click to hide
@@ -163,7 +163,7 @@ const RoleSelection = () => {
                   </div>
                   
                   <button 
-                    className={`w-full py-3 px-4 rounded-lg font-medium text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 transition-all duration-300 shadow-sm mt-auto`}
+                    className={`w-full py-3 px-4 rounded-lg font-medium text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 transition-all duration-300 shadow-sm mt-auto dark:from-primary-700 dark:to-indigo-700 dark:hover:from-primary-600 dark:hover:to-indigo-600`}
                     onClick={() => handleSelect(role.id)}
                   >
                     Select {role.title}
@@ -179,21 +179,21 @@ const RoleSelection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="bg-white rounded-xl shadow-sm p-8 border border-gray-200"
+          className="bg-white rounded-xl shadow-sm p-8 border border-gray-200 dark:bg-slate-800 dark:border-slate-700"
         >
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Not Sure Which Category Fits You?
             </h3>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
               Each category provides tailored legal tools and agreement templates. You can always change your selection later in your account settings.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button className="text-primary-600 font-medium hover:text-primary-700">
+              <button className="text-primary-600 font-medium hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
                 Learn more about user categories
               </button>
-              <span className="hidden sm:block text-gray-300">|</span>
-              <button className="text-primary-600 font-medium hover:text-primary-700">
+              <span className="hidden sm:block text-gray-300 dark:text-slate-600">|</span>
+              <button className="text-primary-600 font-medium hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
                 Contact support for help
               </button>
             </div>

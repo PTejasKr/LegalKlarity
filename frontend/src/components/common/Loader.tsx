@@ -14,8 +14,8 @@ const Loader: React.FC<LoaderProps> = ({ size = 'md', text }) => {
 
   return (
     <div className="flex flex-row items-center justify-center">
-      <div className={`animate-spin rounded-full border-2 border-[#e6e1d5] border-t-[#CDA047] ${sizeClasses[size]}`}></div>
-      {text && <p className="ml-2 text-sm text-white">{text}</p>}
+      <div className={`animate-spin rounded-full border-2 border-[#e6e1d5] border-t-[#CDA047] ${sizeClasses[size]} dark:border-slate-700 dark:border-t-[#CDA047]`}></div>
+      {text && <p className="ml-2 text-sm text-white dark:text-slate-200">{text}</p>}
     </div>
   );
 };

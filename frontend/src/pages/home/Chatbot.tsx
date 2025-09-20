@@ -132,7 +132,7 @@ const Chatbot: React.FC = () => {
             {/* Floating chat button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-6 right-6 w-12 h-12 sm:w-14 sm:h-14 bg-indigo-600 hover:bg-indigo-700 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 z-50"
+                className="fixed bottom-6 right-6 w-12 h-12 sm:w-14 sm:h-14 bg-indigo-600 hover:bg-indigo-700 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 z-50 dark:bg-indigo-700 dark:hover:bg-indigo-600"
             >
                 {isOpen ? (
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -150,7 +150,7 @@ const Chatbot: React.FC = () => {
             {/* Chat window */}
             {isOpen && (
                 <div className="fixed bottom-24 right-6 w-[85vw] h-[70vh] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] xl:w-[30vw] max-w-lg min-w-[280px] min-h-[400px] max-h-[600px] z-50">
-                    <div className="bg-white rounded-2xl shadow-xl flex flex-col h-full">
+                    <div className="bg-white rounded-2xl shadow-xl flex flex-col h-full dark:bg-slate-800 dark:shadow-slate-900/50">
                         {/* Header */}
                         <div className="bg-indigo-600 text-white p-3 rounded-t-2xl shadow-md flex items-center justify-between">
                             <div className="flex items-center">
@@ -172,8 +172,8 @@ const Chatbot: React.FC = () => {
                         </div>
 
                         {/* Disclaimer */}
-                        <div className="p-2 bg-indigo-50 text-gray-700 rounded-lg text-xs m-2 border border-indigo-100">
-                            <p className="font-bold text-indigo-700">Disclaimer:</p>
+                        <div className="p-2 bg-indigo-50 text-gray-700 rounded-lg text-xs m-2 border border-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-200 dark:border-indigo-800">
+                            <p className="font-bold text-indigo-700 dark:text-indigo-300">Disclaimer:</p>
                             <p>
                                 The information provided is for general knowledge only and should not
                                 be considered legal advice. 
@@ -195,13 +195,13 @@ const Chatbot: React.FC = () => {
                                     <div
                                         className={`message-bubble max-w-[80%] p-2 text-sm rounded-2xl relative ${
                                             msg.sender === 'user'
-                                                ? 'bg-indigo-100 text-gray-800 rounded-br-sm'
-                                                : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+                                                ? 'bg-indigo-100 text-gray-800 rounded-br-sm dark:bg-indigo-900/50 dark:text-white'
+                                                : 'bg-gray-100 text-gray-800 rounded-bl-sm dark:bg-slate-700 dark:text-white'
                                         }`}
                                     >
                                         {msg.isTyping ? (
                                             <span className="typing-indicator-container">
-                                                <span className="dot-flashing bg-gray-600"></span>
+                                                <span className="dot-flashing bg-gray-600 dark:bg-slate-400"></span>
                                             </span>
                                         ) : (
                                             <>
@@ -221,7 +221,7 @@ const Chatbot: React.FC = () => {
                                                     })}
                                                 </p>
                                                 {msg.citations && msg.citations.length > 0 && (
-                                                    <div className="mt-2 text-xs text-gray-500">
+                                                    <div className="mt-2 text-xs text-gray-500 dark:text-slate-400">
                                                         Sources:{" "}
                                                         {msg.citations.map((source, idx) => (
                                                             <a
@@ -229,7 +229,7 @@ const Chatbot: React.FC = () => {
                                                                 href={source.uri}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="underline hover:no-underline"
+                                                                className="underline hover:no-underline dark:text-indigo-300"
                                                             >
                                                                 [{idx + 1}]
                                                                 {new URL(source.uri).hostname}{" "}
@@ -245,19 +245,19 @@ const Chatbot: React.FC = () => {
                         </div>
 
                         {/* Input Area */}
-                        <div className="p-2 bg-gray-50 rounded-b-2xl border-t border-gray-200">
+                        <div className="p-2 bg-gray-50 rounded-b-2xl border-t border-gray-200 dark:bg-slate-700 dark:border-slate-600">
                             <div className="flex items-center space-x-2">
                                 <input
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={handleKeyDown}
-                                    className="flex-grow p-2 text-sm rounded-full border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white"
+                                    className="flex-grow p-2 text-sm rounded-full border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white dark:bg-slate-600 dark:border-slate-500 dark:text-white dark:placeholder-slate-300"
                                     placeholder="Ask a legal question..."
                                 />
                                 <button
                                     onClick={sendMessage}
-                                    className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg transition-all"
+                                    className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg transition-all dark:bg-indigo-700 dark:hover:bg-indigo-600"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"

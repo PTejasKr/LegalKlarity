@@ -87,9 +87,9 @@ export default function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
   }, []);
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-2xl">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Voice Recorder</h2>
-      <p className="text-gray-600 mb-6">Record audio to transcribe legal discussions or document content.</p>
+    <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-2xl dark:bg-slate-800 dark:shadow-slate-800/50">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 dark:text-white">Voice Recorder</h2>
+      <p className="text-gray-600 mb-6 dark:text-slate-400">Record audio to transcribe legal discussions or document content.</p>
       
       <div className="flex flex-col items-center gap-4 mb-6">
         {isRecording ? (
@@ -114,8 +114,8 @@ export default function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
         )}
         
         {isLoading && (
-          <div className="flex items-center gap-2 text-gray-600">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
+          <div className="flex items-center gap-2 text-gray-600 dark:text-slate-400">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600 dark:border-slate-400"></div>
             Transcribing...
           </div>
         )}
@@ -123,7 +123,7 @@ export default function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
 
       {audioUrl && (
         <div className="mt-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-3">Recording</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-3 dark:text-white">Recording</h3>
           <div className="flex items-center gap-4">
             <Button
               onClick={togglePlayPause}
@@ -148,9 +148,9 @@ export default function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
 
       {transcript && (
         <div className="mt-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-3">Transcript</h3>
-          <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
-            <p className="text-gray-700">{transcript}</p>
+          <h3 className="text-xl font-semibold text-gray-800 mb-3 dark:text-white">Transcript</h3>
+          <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto dark:bg-slate-700">
+            <p className="text-gray-700 dark:text-slate-300">{transcript}</p>
           </div>
         </div>
       )}
