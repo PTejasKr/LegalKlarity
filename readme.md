@@ -74,22 +74,24 @@ LegalKlarity is an AI-driven platform that transforms how individuals and busine
 
 Create `.env` files in each directory by copying the `.env.example` files and filling in your actual values:
 
-**IMPORTANT**: Before running the backend, you need to obtain a Firebase service account key:
-1. Go to Firebase Console → Project Settings → Service Accounts
-2. Click "Generate new private key"
-3. Save the JSON file as `serviceAccountKey.json` in `backend/src/db/`
+**IMPORTANT**: Firebase Service Account Setup:
+1. For development/testing with mock data: No service account key needed
+2. For production with real Firebase: 
+   - Go to Firebase Console → Project Settings → Service Accounts
+   - Click "Generate new private key"
+   - Save the JSON file as `serviceAccountKey.json` in `backend/src/db/`
 
 **Frontend (.env):**
 ```env
 VITE_API_BASE_URL=http://localhost:3000
 VITE_SOCKET_URL=http://localhost:3001
-VITE_GEMINI_API_KEY=your-gemini-api-key
-VITE_FIREBASE_API_KEY=your-firebase-api-key
-VITE_FIREBASE_AUTH_DOMAIN=your-firebase-auth-domain
-VITE_FIREBASE_PROJECT_ID=your-firebase-project-id
-VITE_FIREBASE_STORAGE_BUCKET=your-firebase-storage-bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your-firebase-messaging-sender-id
-VITE_FIREBASE_APP_ID=your-firebase-app-id
+VITE_GEMINI_API_KEY=your-gemini-api-key  # Optional - leave empty for mock mode
+VITE_FIREBASE_API_KEY=your-firebase-api-key  # Optional - leave empty for mock mode
+VITE_FIREBASE_AUTH_DOMAIN=your-firebase-auth-domain  # Optional - leave empty for mock mode
+VITE_FIREBASE_PROJECT_ID=your-firebase-project-id  # Optional - leave empty for mock mode
+VITE_FIREBASE_STORAGE_BUCKET=your-firebase-storage-bucket  # Optional - leave empty for mock mode
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-firebase-messaging-sender-id  # Optional - leave empty for mock mode
+VITE_FIREBASE_APP_ID=your-firebase-app-id  # Optional - leave empty for mock mode
 ```
 
 **Backend (.env):**
@@ -98,8 +100,38 @@ PORT=3000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
 CONTENT_ANALYZER_URL=http://127.0.0.1:8000
-GEMINI_API_KEY=your-gemini-api-key
+GEMINI_API_KEY=your-gemini-api-key  # Optional - leave empty for mock mode
+USE_MOCK_API=true  # Set to false when using real API keys
 ```
+
+### Running the Application (Development Mode)
+
+1. Start the AI service:
+   ```bash
+   cd content_analyzer
+   python app.py
+   ```
+
+2. Start the backend server:
+   ```bash
+   cd backend
+   npm run dev
+   ```
+
+3. Start the frontend development server:
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+### Running with Mock Data (No API Keys Required)
+
+The application is configured to run in mock mode by default:
+- Firebase authentication will work with mock users
+- AI services will return sample data
+- All features are available for testing without real API keys
+
+To use real API keys, set `USE_MOCK_API=false` in the backend `.env` file and add your actual API keys.
 
 ### Running the Application
 
