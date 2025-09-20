@@ -4,6 +4,18 @@ import { agreementProcessAsync } from "../../../store/agreementSlice";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
 
+// Predefined common agreement types
+const COMMON_AGREEMENTS = [
+  "Rental Agreement",
+  "Employment Contract",
+  "Loan Agreement",
+  "Marriage Contract",
+  "Service Agreement",
+  "Non-Disclosure Agreement",
+  "Partnership Agreement",
+  "Sales Agreement"
+];
+
 export default function AgreementProcess() {
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
@@ -11,22 +23,25 @@ export default function AgreementProcess() {
     const [showDetails, setShowDetails] = useState<any>(false);
     const [query, setQuery] = useState("");
 
-    const handleView = async () => {
+    const handleView = async (agreementType?: string) => {
+        const typeToUse = agreementType || query;
+        
+        // Validate that the agreement type is in our predefined list
+        if (!COMMON_AGREEMENTS.includes(typeToUse)) {
+            toast.error("Please select a valid agreement type from the options provided.");
+            return;
+        }
+        
         setLoading(true);
+        setQuery(typeToUse);
 
         try {
-            if (!query) {
-                toast.error("Please enter an agreement type to search.");
-                setLoading(false);
-                return;
-            }
-
             if (!user || !user.uid) {
                 toast.error("You must be logged in to view agreement processes.");
                 return;
             }
             
-            const response: any = await dispatch(agreementProcessAsync({ uid: user.uid, processType: query })).unwrap();
+            const response: any = await dispatch(agreementProcessAsync({ uid: user.uid, processType: typeToUse })).unwrap();
 
             if (response?.statusCode === 200 || response?.success === true) {
                 setShowDetails(response.data);
@@ -78,13 +93,13 @@ export default function AgreementProcess() {
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                placeholder="Enter agreement type (e.g., Rental Agreement, Employment Contract, Loan Agreement)"
+                                placeholder="Or enter an agreement type (must be from the list above)"
                                 className="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                             />
                         </div>
                         <div className="mt-4 flex justify-center">
                             <button
-                                onClick={handleView}
+                                onClick={() => handleView()}
                                 disabled={loading}
                                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 dark:from-primary-700 dark:to-indigo-700 dark:hover:from-primary-600 dark:hover:to-indigo-600 dark:focus:ring-offset-slate-900"
                             >
@@ -103,9 +118,33 @@ export default function AgreementProcess() {
                         </div>
                         <div className="mt-4 text-center">
                             <p className="text-sm text-gray-500 dark:text-slate-400">
-                                Examples: <span className="text-gray-700 dark:text-slate-300">Rental Agreement, Employment Contract, Loan Agreement, Marriage Contract</span>
+                                Select from the common agreement types above for best results
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                {/* Common Agreement Types */}
+                <div className="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+                    <h2 className="text-xl font-bold text-gray-900 mb-4 dark:text-white">Common Agreement Types</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {COMMON_AGREEMENTS.map((agreement) => (
+                            <button
+                                key={agreement}
+                                onClick={() => handleView(agreement)}
+                                disabled={loading}
+                                className={`p-4 text-center rounded-lg border transition-all ${
+                                    query === agreement
+                                        ? "border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:border-primary-500 dark:text-primary-300"
+                                        : "border-gray-200 hover:bg-gray-50 dark:border-slate-600 dark:hover:bg-slate-700"
+                                }`}
+                            >
+                                <FileText className="h-6 w-6 mx-auto mb-2 text-gray-500 dark:text-slate-400" />
+                                <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
+                                    {agreement}
+                                </span>
+                            </button>
+                        ))}
                     </div>
                 </div>
 
@@ -310,7 +349,7 @@ export default function AgreementProcess() {
                         </div>
                         <h3 className="mt-4 text-xl font-medium text-gray-900 dark:text-white">Find Agreement Processes</h3>
                         <p className="mt-2 text-gray-500 dark:text-slate-400">
-                            Enter an agreement type above to get step-by-step guidance on how to create, review, and execute legal documents.
+                            Select an agreement type from the options above to get step-by-step guidance on how to create, review, and execute legal documents.
                         </p>
                     </div>
                 )}
