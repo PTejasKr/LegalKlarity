@@ -29,8 +29,11 @@ if GEMINI_API_KEY:
     try:
         genai.configure(api_key=GEMINI_API_KEY)
         GEMINI_AVAILABLE = True
+        print(f"Gemini API configured successfully with key: {GEMINI_API_KEY[:10]}...")  # Print first 10 chars for debugging
     except Exception as e:
         print(f"Failed to initialize Gemini AI: {e}")
+else:
+    print("No GEMINI_API_KEY found in environment variables")
 
 _classifier = None
 def get_classifier():
