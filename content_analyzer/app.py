@@ -303,6 +303,45 @@ def create_fallback_analysis(text, document_type):
         "next_steps": ["Review document with legal counsel"]
     }
 
+# File extraction functions
+def extract_pdf(file_stream):
+    try:
+        file_stream.seek(0)
+        with pdfplumber.open(file_stream) as pdf:
+            return safe_join_text([p.extract_text() for p in pdf.pages])
+    except Exception as e:
+        print(f"PDF extract error: {e}")
+        try:
+            file_stream.seek(0)
+            doc = fitz.open(stream=file_stream.read(), filetype="pdf")
+            texts = []
+            for p in doc:
+                pix = p.get_pixmap(dpi=200)
+                img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                texts.append(pytesseract.image_to_string(img))
+            return "\n".join(texts)
+        except Exception as e2:
+            print(f"PDF OCR error: {e2}")
+            return ""
+
+def extract_docx(file_stream):
+    try:
+        file_stream.seek(0)
+        doc = docx.Document(io.BytesIO(file_stream.read()))
+        return "\n".join(p.text for p in doc.paragraphs if p.text)
+    except Exception as e:
+        print(f"DOCX extract error: {e}")
+        return ""
+
+def extract_image(file_stream):
+    try:
+        file_stream.seek(0)
+        img = Image.open(file_stream).convert("RGB")
+        return pytesseract.image_to_string(img)
+    except Exception as e:
+        print(f"Image extract error: {e}")
+        return ""
+
 # Interactive document chat function
 def chat_about_document(text, question):
     """
