@@ -66,13 +66,18 @@ LegalKlarity is an AI-driven platform that transforms how individuals and busine
    ```
 4. Install AI service dependencies:
    ```bash
-   cd ai_model
+   cd content_analyzer
    pip install -r requirements.txt
    ```
 
 ### Environment Setup
 
 Create `.env` files in each directory by copying the `.env.example` files and filling in your actual values:
+
+**IMPORTANT**: Before running the backend, you need to obtain a Firebase service account key:
+1. Go to Firebase Console → Project Settings → Service Accounts
+2. Click "Generate new private key"
+3. Save the JSON file as `serviceAccountKey.json` in `backend/src/db/`
 
 **Frontend (.env):**
 ```env
@@ -92,7 +97,7 @@ VITE_FIREBASE_APP_ID=your-firebase-app-id
 PORT=3000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
-AI_MODEL_URL=http://127.0.0.1:8000
+CONTENT_ANALYZER_URL=http://127.0.0.1:8000
 GEMINI_API_KEY=your-gemini-api-key
 ```
 
@@ -100,7 +105,7 @@ GEMINI_API_KEY=your-gemini-api-key
 
 1. Start the AI service:
    ```bash
-   cd ai_model
+   cd content_analyzer
    python app.py
    ```
 
