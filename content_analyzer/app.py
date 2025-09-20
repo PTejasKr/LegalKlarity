@@ -12,30 +12,18 @@ from reportlab.lib.styles import getSampleStyleSheet
 import json
 import os
 from datetime import datetime
+import google.generativeai as genai
 
-# Google Cloud Vertex AI imports for enhanced analysis
-try:
-    import vertexai
-    from vertexai.generative_models import GenerativeModel, Part
-    VERTEX_AI_AVAILABLE = True
-except ImportError:
-    VERTEX_AI_AVAILABLE = False
-    print("Vertex AI not available. Using fallback analysis.")
-
-# Flask app
-app = Flask(__name__)
-
-# Load environment variables
-GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-google_cloud_project")
-GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
-
-# Initialize Vertex AI if available
-if VERTEX_AI_AVAILABLE:
-    try:
-        vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=GOOGLE_CLOUD_LOCATION)
-    except Exception as e:
-        print(f"Failed to initialize Vertex AI: {e}")
-        VERTEX_AI_AVAILABLE = False
+_classifier = None
+def get_classifier():
+    global _classifier
+    if _classifier is None:
+        _classifier = pipeline(
+            "zero-shot-classification",
+            model="valhalla/distilbart-mnli-12-3",
+            device=-1  # CPU
+        )
+    return _classifier
 
 _classifier = None
 def get_classifier():
@@ -126,45 +114,6 @@ def classify_agreement(text):
         details["reason"] = "low_confidence"
     return accept, details
 
-# File extraction
-def extract_pdf(file_stream):
-    try:
-        file_stream.seek(0)
-        with pdfplumber.open(file_stream) as pdf:
-            return safe_join_text([p.extract_text() for p in pdf.pages])
-    except Exception as e:
-        print(f"PDF extract error: {e}")
-        try:
-            file_stream.seek(0)
-            doc = fitz.open(stream=file_stream.read(), filetype="pdf")
-            texts = []
-            for p in doc:
-                pix = p.get_pixmap(dpi=200)
-                img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-                texts.append(pytesseract.image_to_string(img))
-            return "\n".join(texts)
-        except Exception as e2:
-            print(f"PDF OCR error: {e2}")
-            return ""
-
-def extract_docx(file_stream):
-    try:
-        file_stream.seek(0)
-        doc = docx.Document(io.BytesIO(file_stream.read()))
-        return "\n".join(p.text for p in doc.paragraphs if p.text)
-    except Exception as e:
-        print(f"DOCX extract error: {e}")
-        return ""
-
-def extract_image(file_stream):
-    try:
-        file_stream.seek(0)
-        img = Image.open(file_stream).convert("RGB")
-        return pytesseract.image_to_string(img)
-    except Exception as e:
-        print(f"Image extract error: {e}")
-        return ""
-
 # Enhanced document analysis function
 def analyze_legal_document(text, document_type=None):
     """
@@ -182,8 +131,8 @@ def analyze_legal_document(text, document_type=None):
     if not document_type:
         document_type = detect_document_type(text)
     
-    # If Vertex AI is not available, use fallback analysis
-    if not VERTEX_AI_AVAILABLE:
+    # If Gemini is not available, use fallback analysis
+    if not GEMINI_AVAILABLE:
         return create_fallback_analysis(text, document_type)
     
     # Enhanced prompt engineering for comprehensive analysis
@@ -257,18 +206,10 @@ def analyze_legal_document(text, document_type=None):
     
     try:
         # Initialize Gemini model
-        model = GenerativeModel("gemini-1.5-flash-001")
+        model = genai.GenerativeModel('gemini-pro')
         
         # Generate response
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "temperature": 0.4,
-                "top_p": 0.8,
-                "top_k": 40,
-                "max_output_tokens": 8192,
-            }
-        )
+        response = model.generate_content(prompt)
         
         # Parse and validate JSON response
         analysis = json.loads(response.text)
@@ -369,9 +310,9 @@ def chat_about_document(text, question):
     Returns:
         str: AI-generated answer
     """
-    # If Vertex AI is not available, return a fallback response
-    if not VERTEX_AI_AVAILABLE:
-        return "Chat functionality requires Google Cloud Vertex AI integration."
+    # If Gemini is not available, return a fallback response
+    if not GEMINI_AVAILABLE:
+        return "Chat functionality requires Gemini API integration."
     
     prompt = f"""
     Based on the following document, answer the question accurately and concisely.
@@ -385,7 +326,7 @@ def chat_about_document(text, question):
     """
     
     try:
-        model = GenerativeModel("gemini-1.5-flash-001")
+        model = genai.GenerativeModel('gemini-pro')
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
