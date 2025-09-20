@@ -427,28 +427,41 @@ def enhanced_document_analysis():
     """
     Enhanced document analysis endpoint
     """
+    print("Received request to /enhanced_analysis")
     if "file" not in request.files:
+        print("No file uploaded in request")
         return jsonify({"error": "No file uploaded"}), 400
     
     file = request.files["file"]
+    print(f"Received file: {file.filename}")
     if file.filename == "":
+        print("No file selected")
         return jsonify({"error": "No file selected"}), 400
 
     # Extract text (using existing functions)
     filename = file.filename.lower()
+    print(f"Processing file type: {filename}")
     text = ""
     
     if filename.endswith(".pdf"):
+        print("Extracting PDF...")
         text = extract_pdf(file.stream)
     elif filename.endswith(".docx"):
+        print("Extracting DOCX...")
         text = extract_docx(file.stream)
     elif filename.endswith((".png", ".jpg", ".jpeg")):
+        print("Extracting image...")
         text = extract_image(file.stream)
     else:
+        print(f"Unsupported file type: {filename}")
         return jsonify({"error": "Unsupported file type"}), 400
     
+    print(f"Extracted text length: {len(text)}")
+    
     # Check if it's a valid agreement (using existing function)
+    print("Classifying agreement...")
     is_ok, details = classify_agreement(text)
+    print(f"Classification result: {is_ok}, details: {details}")
     if not is_ok:
         return jsonify({
             "error": "Rejected: Not a valid agreement.",
@@ -456,7 +469,9 @@ def enhanced_document_analysis():
         }), 400
     
     # Perform enhanced analysis
+    print("Performing enhanced analysis...")
     analysis = analyze_legal_document(text)
+    print(f"Analysis completed: {type(analysis)}")
     
     return jsonify({
         "filename": file.filename,
