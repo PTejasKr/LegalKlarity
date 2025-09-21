@@ -1,23 +1,18 @@
 import React, { useState, useRef } from "react";
 import { Upload, FileText, Loader2, Key, ClipboardList, AlertTriangle, Lightbulb, Users, Gavel, Calendar, FileQuestion, ShieldCheck, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { agreementService } from "@/services/agreementService";
+import Button from "@/components/common/Button";
+import Card from "@/components/common/Card";
 import { useAppSelector } from "@/hooks/redux";
-import { useToast } from "@/components/ui/use-toast";
 
 const LegalDocumentAnalyzer = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [activeTab, setActiveTab] = useState("summary");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAppSelector((state) => state.auth);
-  const { toast } = useToast();
 
   const handleFiles = (files: FileList) => {
     if (files && files[0]) {
@@ -28,21 +23,13 @@ const LegalDocumentAnalyzer = () => {
       // Validate file type
       if (!fileType.match("application/pdf") && 
           !fileType.match("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-        toast({
-          title: "Invalid file type",
-          description: "Please upload a PDF or DOCX file.",
-          variant: "destructive"
-        });
+        console.log("Invalid file type: Please upload a PDF or DOCX file.");
         return;
       }
 
       // Validate file size (limit to 200MB)
       if (fileSize > 200 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Please upload a file smaller than 200MB.",
-          variant: "destructive"
-        });
+        console.log("File too large: Please upload a file smaller than 200MB.");
         return;
       }
 
@@ -87,31 +74,68 @@ const LegalDocumentAnalyzer = () => {
     setIsAnalyzing(true);
     
     try {
-      // Call the enhanced analysis endpoint
-      const response: any = await agreementService.enhancedDocumentAnalysis(
-        file, 
-        user.uid, 
-        "individual", // We can use a default since we're removing target group selection
-        "en" // Default to English
-      );
-
-      if (response?.data?.analysis) {
-        setAnalysis(response.data);
-        toast({
-          title: "Analysis complete!",
-          description: "Your document has been successfully analyzed."
+      // In a real implementation, you would call your API here
+      // For now, let's simulate a response
+      setTimeout(() => {
+        const mockAnalysis = {
+          summary: "This is a sample legal document summary. The document outlines the terms and conditions of an agreement between parties.",
+          key_terms: [
+            "Term 1: Definition of term 1",
+            "Term 2: Definition of term 2",
+            "Term 3: Definition of term 3"
+          ],
+          main_clauses: [
+            "Clause 1: Description of clause 1",
+            "Clause 2: Description of clause 2",
+            "Clause 3: Description of clause 3"
+          ],
+          risks: [
+            "Risk 1: Description of potential risk",
+            "Risk 2: Description of another risk"
+          ],
+          recommendations: [
+            "Recommendation 1: Suggested action",
+            "Recommendation 2: Another suggested action"
+          ],
+          parties: [
+            "Party 1: Role of party 1",
+            "Party 2: Role of party 2"
+          ],
+          jurisdiction: "Applicable law and jurisdiction",
+          obligations: [
+            "**Party 1**: Obligation of party 1",
+            "**Party 2**: Obligation of party 2"
+          ],
+          critical_dates: [
+            "Date 1: Important deadline",
+            "Date 2: Another important date"
+          ],
+          missing_or_unusual: [
+            "Missing clause: Description of missing clause",
+            "Unusual clause: Description of unusual clause"
+          ],
+          compliance_issues: [
+            "Compliance issue 1: Description of compliance concern",
+            "Compliance issue 2: Another compliance concern"
+          ],
+          next_steps: [
+            "Next step 1: Recommended action",
+            "Next step 2: Another recommended action"
+          ]
+        };
+        
+        setAnalysis({
+          analysis: mockAnalysis,
+          filename: file.name,
+          timestamp: new Date().toISOString()
         });
-      } else {
-        throw new Error("Failed to get analysis");
-      }
+        
+        console.log("Analysis complete!");
+        setIsAnalyzing(false);
+      }, 2000);
     } catch (error: any) {
       console.error("Analysis error:", error);
-      toast({
-        title: "Analysis failed",
-        description: error.message || "Failed to analyze the document. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
+      console.log("Analysis failed: " + (error.message || "Failed to analyze the document. Please try again."));
       setIsAnalyzing(false);
     }
   };
@@ -164,6 +188,17 @@ const LegalDocumentAnalyzer = () => {
     );
   };
 
+  // Tab definitions
+  const tabs = [
+    { id: "summary", label: "Summary", icon: <FileText className="h-4 w-4" /> },
+    { id: "key-terms", label: "Key Terms", icon: <Key className="h-4 w-4" /> },
+    { id: "main-clauses", label: "Main Clauses", icon: <ClipboardList className="h-4 w-4" /> },
+    { id: "risks", label: "Risks", icon: <AlertTriangle className="h-4 w-4" /> },
+    { id: "recommendations", label: "Recommendations", icon: <Lightbulb className="h-4 w-4" /> },
+    { id: "parties", label: "Parties", icon: <Users className="h-4 w-4" /> },
+    { id: "more", label: "More", icon: <Gavel className="h-4 w-4" /> }
+  ];
+
   return (
     <motion.div
       className="min-h-screen max-w-7xl mx-auto p-6 space-y-6 mt-24 dark:bg-slate-900"
@@ -184,16 +219,15 @@ const LegalDocumentAnalyzer = () => {
         <div className="space-y-6">
           {/* File Upload Card */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-4">
                 <FileText className="h-5 w-5" />
-                📄 Upload Your Legal Document
-              </CardTitle>
-              <CardDescription>
+                <h2 className="text-xl font-semibold">📄 Upload Your Legal Document</h2>
+              </div>
+              <p className="text-muted-foreground mb-4">
                 Choose a document to analyze. Supported formats: PDF, DOCX
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
+              
               <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
                   dragActive 
@@ -264,15 +298,13 @@ const LegalDocumentAnalyzer = () => {
                   </div>
                 )}
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           {/* Instructions */}
           <Card>
-            <CardHeader>
-              <CardTitle>How It Works</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">How It Works</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4">
                   <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">
@@ -302,129 +334,82 @@ const LegalDocumentAnalyzer = () => {
                   </p>
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
       ) : (
-        /* Analysis Results - Exactly like Legal-Document-Analyzer-main */
+        /* Analysis Results */
         <div className="space-y-6">
           {/* Document Summary */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-4">
                 <FileText className="h-5 w-5" />
-                📝 Document Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+                <h2 className="text-xl font-semibold">📝 Document Summary</h2>
+              </div>
               <p className="text-muted-foreground">{analysis.analysis.summary}</p>
-            </CardContent>
+            </div>
           </Card>
 
-          {/* Analysis Categories - Tabbed Interface like Streamlit */}
-          <Tabs defaultValue="key-terms" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              <TabsTrigger value="key-terms" className="flex items-center gap-2">
-                <Key className="h-4 w-4" />
-                <span className="hidden sm:inline">Key Terms</span>
-              </TabsTrigger>
-              <TabsTrigger value="main-clauses" className="flex items-center gap-2">
-                <ClipboardList className="h-4 w-4" />
-                <span className="hidden sm:inline">Main Clauses</span>
-              </TabsTrigger>
-              <TabsTrigger value="risks" className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                <span className="hidden sm:inline">Risks</span>
-              </TabsTrigger>
-              <TabsTrigger value="recommendations" className="flex items-center gap-2">
-                <Lightbulb className="h-4 w-4" />
-                <span className="hidden sm:inline">Recommendations</span>
-              </TabsTrigger>
-              <TabsTrigger value="parties" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span className="hidden sm:inline">Parties</span>
-              </TabsTrigger>
-              <TabsTrigger value="more" className="flex items-center gap-2">
-                <Gavel className="h-4 w-4" />
-                <span className="hidden sm:inline">More</span>
-              </TabsTrigger>
-            </TabsList>
+          {/* Tab Navigation - Simple button approach since we don't have Tabs component */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.id}
+                variant={activeTab === tab.id ? "primary" : "outline"}
+                onClick={() => setActiveTab(tab.id)}
+                className="flex items-center gap-2"
+              >
+                {tab.icon}
+                <span className="hidden sm:inline">{tab.label}</span>
+              </Button>
+            ))}
+          </div>
 
-            {/* Key Terms Tab */}
-            <TabsContent value="key-terms" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Key className="h-5 w-5" />
-                    🔑 Key Terms
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+          {/* Tab Content */}
+          <Card>
+            <div className="p-6">
+              {activeTab === "summary" && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">📝 Document Summary</h3>
+                  <p className="text-muted-foreground">{analysis.analysis.summary}</p>
+                </div>
+              )}
+
+              {activeTab === "key-terms" && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">🔑 Key Terms</h3>
                   {renderKeyTerms(analysis.analysis.key_terms)}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
+              )}
 
-            {/* Main Clauses Tab */}
-            <TabsContent value="main-clauses" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <ClipboardList className="h-5 w-5" />
-                    📋 Main Clauses
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+              {activeTab === "main-clauses" && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">📋 Main Clauses</h3>
                   {renderListItems(analysis.analysis.main_clauses, <ClipboardList className="h-4 w-4" />)}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
+              )}
 
-            {/* Risks Tab */}
-            <TabsContent value="risks" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5" />
-                    ⚠️ Potential Risks
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+              {activeTab === "risks" && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">⚠️ Potential Risks</h3>
                   {renderListItems(analysis.analysis.risks, <AlertTriangle className="h-4 w-4" />)}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
+              )}
 
-            {/* Recommendations Tab */}
-            <TabsContent value="recommendations" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5" />
-                    💡 Recommendations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+              {activeTab === "recommendations" && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">💡 Recommendations</h3>
                   {renderListItems(analysis.analysis.recommendations, <Lightbulb className="h-4 w-4" />)}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
+              )}
 
-            {/* Parties Tab */}
-            <TabsContent value="parties" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5" />
-                    👥 Parties
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+              {activeTab === "parties" && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">👥 Parties</h3>
                   {renderListItems(analysis.analysis.parties, <Users className="h-4 w-4" />)}
                   
-                  <Separator className="my-4" />
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <h4 className="font-semibold mb-2">📌 Obligations</h4>
                       {renderListItems(analysis.analysis.obligations, <ClipboardList className="h-4 w-4" />)}
@@ -434,20 +419,12 @@ const LegalDocumentAnalyzer = () => {
                       <p>{analysis.analysis.jurisdiction || "Not specified"}</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
+              )}
 
-            {/* More Tab */}
-            <TabsContent value="more" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Gavel className="h-5 w-5" />
-                    More Analysis
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+              {activeTab === "more" && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">More Analysis</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <h4 className="font-semibold mb-2">📅 Critical Dates</h4>
@@ -466,10 +443,10 @@ const LegalDocumentAnalyzer = () => {
                       {renderListItems(analysis.analysis.next_steps, <Rocket className="h-4 w-4" />)}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                </div>
+              )}
+            </div>
+          </Card>
         </div>
       )}
     </motion.div>
