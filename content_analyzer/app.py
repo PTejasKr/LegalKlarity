@@ -20,6 +20,13 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(script_dir, '.env')
 load_dotenv(dotenv_path=env_path)
 
+# Debug: Print loaded environment variables
+print(f"Script directory: {script_dir}")
+print(f"Env file path: {env_path}")
+print(f"Env file exists: {os.path.exists(env_path)}")
+gemini_key = os.environ.get('GEMINI_API_KEY', 'Not found')
+print(f"GEMINI_API_KEY: {gemini_key}")
+
 # Flask app
 app = Flask(__name__)
 
