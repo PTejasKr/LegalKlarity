@@ -15,8 +15,10 @@ from datetime import datetime
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from .env file in the same directory as this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(script_dir, '.env')
+load_dotenv(dotenv_path=env_path)
 
 # Flask app
 app = Flask(__name__)
