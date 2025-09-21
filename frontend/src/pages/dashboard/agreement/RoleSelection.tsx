@@ -122,7 +122,8 @@ const RoleSelection = () => {
   const handleSelect = (roleId: string) => {
     setSlideOut(roleId);
     setTimeout(() => {
-      navigate(`/dashboard/agreement/summary?targetGroup=${roleId}`);
+      // Redirect directly to the enhanced summary page without targetGroup parameter
+      navigate(`/dashboard/agreement/summary`);
     }, 300);
   };
   

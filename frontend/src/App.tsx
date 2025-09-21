@@ -20,65 +20,71 @@ import Dashboard from './pages/dashboard/Dashboard';
 import Settings from './pages/dashboard/Settings';
 import Chatbot from './pages/home/Chatbot';
 
+import { lazy, Suspense } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Navbar from "./layouts/Navbar";
+import Footer from "./layouts/Footer";
+import Chatbot from "./components/chatbot/Chatbot";
+import { useAppSelector } from "./hooks/redux";
+import Loader from "./components/common/Loader";
+import EnhancedSummaryPage from './pages/dashboard/agreement/EnhancedSummaryPage';
+
+// Lazy load components
+const Home = lazy(() => import("./pages/home/HomePage"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const SignUp = lazy(() => import("./pages/auth/SignUp"));
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const Settings = lazy(() => import("./pages/dashboard/Settings"));
+const RoleSelection = lazy(() => import("./pages/dashboard/agreement/RoleSelection"));
+const CasesList = lazy(() => import("./pages/dashboard/case/CasesList"));
+const AgreementProcess = lazy(() => import("./pages/dashboard/process/AgreementProcess"));
+
 function App() {
-  const dispatch = useAppDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
-  useEffect(() => {
-    dispatch(getCurrentUserAsync());
-  }, [dispatch]);
-
-  // Helper to extract targetGroup from query param and map to category
-  function SummaryPageWithTargetGroup() {
-    const location = useLocation();
-    const params = new URLSearchParams(location.search);
-    const targetGroup = params.get('targetGroup');
-    // Map role id to category prop
-    let category: 'individual' | 'institutional' | 'enterprise' = 'institutional';
-    if (targetGroup === 'citizen') category = 'individual';
-    else if (targetGroup === 'business') category = 'enterprise';
-    else if (targetGroup === 'student') category = 'institutional';
-    return <SummaryPage targetGroup={category} />;
+  if (loading) {
+    return <Loader />;
   }
 
   return (
     <>
+      <Router>
+        <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900">
+          <Navbar />
+          <main className="flex-grow">
+            <Suspense fallback={<Loader />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" />} />
+                <Route path="/signup" element={!isAuthenticated ? <SignUp /> : <Navigate to="/dashboard" />} />
+                <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Login />} />
+                <Route path="/dashboard/settings" element={isAuthenticated ? <Settings /> : <Login />} />
+                <Route path="/dashboard/role-selection" element={isAuthenticated ? <RoleSelection /> : <Login />} />
+                <Route path="/dashboard/agreement/summary" element={isAuthenticated ? <EnhancedSummaryPage /> : <Login />} />
+                <Route path="/dashboard/case/case-details" element={isAuthenticated ? <CasesList /> : <Login />} />
+                <Route path="/dashboard/process/summary" element={isAuthenticated ? <AgreementProcess /> : <Login />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </Suspense>
+          </main>
+          <Chatbot />
+          <Footer />
+        </div>
+      </Router>
       <ToastContainer
         position="bottom-right"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
-        closeButton={true}
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="dark"
+        theme="light"
       />
-
-      <div className="min-h-screen bg-white dark:bg-slate-900">
-        <Navbar />
-        <main className="">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/active" element={<div>frontend active</div>} />
-            <Route path='/dashboard' element={isAuthenticated ? <Dashboard /> : <Login />} />
-            <Route path="/dashboard/settings" element={isAuthenticated ? <Settings /> : <Login />} />
-            <Route path="/dashboard/role-selection" element={isAuthenticated ? <RoleSelection /> : <Login />} />
-            <Route path="/dashboard/agreement/summary" element={isAuthenticated ? <SummaryPageWithTargetGroup /> : <Login />} />
-            <Route path="/dashboard/case/case-details" element={isAuthenticated ? <CasesList /> : <Login />} />
-            <Route path="/dashboard/process/summary" element={isAuthenticated ? <AgreementProcess /> : <Login />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </main>
-        <Chatbot />
-        <Footer />
-      </div>
     </>
   );
 }
