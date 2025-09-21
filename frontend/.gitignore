@@ -36,3 +36,6 @@ Thumbs.db
 # Backup files
 *.bak
 *.backup
+
+# Deployment documentation
+DEPLOYMENT.md
