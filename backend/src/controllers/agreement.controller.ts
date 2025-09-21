@@ -10,11 +10,23 @@ import fs from 'fs';
 import { mockSummarizeAgreement, mockProcessWithGemini } from "../services/mockGeminiApi.services";
 import multer from "multer";
 
+// Define a custom type for multer file
+interface UploadedFile {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    size: number;
+    destination: string;
+    filename: string;
+    path: string;
+}
+
 // Extend the Request type to include files property from multer
 interface MulterRequest extends Request {
     files?: {
-        [fieldname: string]: multer.File[];
-    };
+        [fieldname: string]: UploadedFile[];
+    } | UploadedFile[];
 }
 
 const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) => {
@@ -67,7 +79,6 @@ const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) 
         throw new ApiError(500, 'Failed to retrieve agreement text from ai model');
     }
 
-    // Check if we should use mock API
     const useMockApi = process.env.USE_MOCK_API === 'true';
     
     // If using mock API, return mock response immediately
@@ -99,7 +110,7 @@ const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) 
         }
     }
 
-    // Optimized prompt templates for each target group
+    // Create a prompt for the AI model
     let prompt = '';
     switch (targetGroup) {
 
@@ -374,6 +385,105 @@ const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) 
     }
 });
 
+// Enhanced agreement analysis endpoint
+const enhancedAgreementAnalysis = asyncHandler(async (req: MulterRequest, res: Response) => {
+    const { uid, language, targetGroup } = req.body;
+    
+    console.log("Received request for enhanced agreement analysis");
+    console.log("Received targetGroup:", targetGroup);
+    console.log("Received uid:", uid);
+
+    if (!uid || !targetGroup) {
+        await createAuditLog({
+            uid: uid || 'unknown',
+            action: 'ENHANCED_AGREEMENT_ANALYSIS',
+            status: 'failure',
+            entityType: 'Agreement',
+            details: 'Missing uid, file, or targetGroup',
+        });
+        throw new ApiError(400, 'uid, file, and targetGroup are required');
+    }
+
+    const file = (req.files && (req.files as any)['file'] && (req.files as any)['file'][0]) || null;
+    
+    if (!file) {
+        throw new ApiError(400, 'File is required');
+    }
+
+    // file.path is the path to the file saved by multer
+    const formData = new FormData();
+    formData.append('file', fs.createReadStream(file.path), file.originalname);
+
+    try {
+        // Call the enhanced analysis endpoint in the content analyzer
+        const modelResponse = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/enhanced_analysis`, formData, {
+            headers: {
+                ...formData.getHeaders(),
+            },
+        });
+
+        let analysisResult = modelResponse.data.analysis;
+        let extractedText = modelResponse.data.extracted_text;
+
+        if (!analysisResult) {
+            await createAuditLog({
+                uid: uid || 'unknown',
+                action: 'ENHANCED_AGREEMENT_ANALYSIS',
+                status: 'failure',
+                entityType: 'Agreement',
+                details: 'Failed to retrieve enhanced analysis from content analyzer',
+            });
+            throw new ApiError(500, 'Failed to retrieve enhanced analysis from content analyzer');
+        }
+
+        // Translate the analysis if needed
+        if (language && language !== 'en') {
+            try {
+                // For now, we'll just translate the summary, but in a real implementation
+                // you might want to translate more fields
+                if (analysisResult.summary) {
+                    analysisResult.summary = await translateText(analysisResult.summary, language);
+                }
+            } catch (translationError: any) {
+                await createAuditLog({
+                    uid,
+                    action: 'ENHANCED_AGREEMENT_ANALYSIS',
+                    status: 'failure',
+                    entityType: 'Agreement',
+                    details: `Translation failed: ${translationError.message}`,
+                });
+            }
+        }
+        
+        await createAuditLog({
+            uid,
+            action: 'ENHANCED_AGREEMENT_ANALYSIS',
+            status: 'success',
+            entityType: 'Agreement',
+            details: `Enhanced agreement analysis completed for targetGroup: ${targetGroup}, language: ${language || 'en'}`,
+        });
+
+        return res.status(200).json(
+            new ApiResponse(200, {
+                analysis: analysisResult,
+                extracted_text: extractedText,
+                filename: file.originalname
+            }, 'Enhanced agreement analysis completed successfully')
+        );
+
+    } catch (error: any) {
+        console.error("Enhanced analysis error:", error);
+        await createAuditLog({
+            uid,
+            action: 'ENHANCED_AGREEMENT_ANALYSIS',
+            status: 'failure',
+            entityType: 'Agreement',
+            details: error.message || 'Unknown error in enhanced analysis',
+        });
+        throw new ApiError(500, 'Failed to perform enhanced agreement analysis: ' + (error.message || 'Unknown error'));
+    }
+});
+
 // agreemental process
 const processAgreement = asyncHandler(async (req: Request, res: Response) => {
     const { uid, processType, language } = req.body;
@@ -530,4 +640,4 @@ const uploadFile = asyncHandler(async (req: MulterRequest, res: Response) => {
 });
 
 
-export { agreementSummary, processAgreement, translateTextController, uploadFile };
+export { agreementSummary, enhancedAgreementAnalysis, processAgreement, translateTextController, uploadFile };

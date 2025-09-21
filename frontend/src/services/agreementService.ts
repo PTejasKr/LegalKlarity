@@ -21,6 +21,23 @@ export const agreementService = {
         });
 
         return response.data;
+    },
+
+    async enhancedDocumentAnalysis(file: File, uid: string, targetGroup: string, language: string): Promise<any> {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('uid', uid);
+        formData.append('targetGroup', targetGroup);
+        formData.append('language', language);
+
+        // Call the enhanced analysis endpoint directly
+        const response = await api.post('/api/v1/agreements/enhanced-analysis', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        return response.data;
     }
 }
 

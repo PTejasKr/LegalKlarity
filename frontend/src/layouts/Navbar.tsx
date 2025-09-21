@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { getAuth, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
+
 import { getCurrentUserAsync } from "../store/authSlice";
 import { Menu, X, User, LogOut, Home, FileText, Users, BookOpen, Info, Mail } from "lucide-react";
+
 import ThemeToggle from "../components/ThemeToggle";
+import { auth } from "../utils/firebase";
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
@@ -21,10 +24,17 @@ const Navbar = () => {
   }, [location]);
 
   const handleLogout = async () => {
-    await signOut(getAuth());
-    localStorage.removeItem("idToken");
-    dispatch(getCurrentUserAsync());
-    navigate("/");
+    try {
+      await signOut(auth);
+      localStorage.removeItem("idToken");
+      dispatch(logout()); // Dispatch the logout action instead of getCurrentUserAsync
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Even if there's an error, still dispatch logout to update the UI
+      dispatch(logout());
+      navigate("/");
+    }
   };
 
   const navigation = [

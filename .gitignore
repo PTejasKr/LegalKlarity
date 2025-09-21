@@ -36,3 +36,7 @@ Thumbs.db
 # Backup files
 *.bak
 *.backup
+
+# Temporary directories
+temp/
+public/temp/

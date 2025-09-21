@@ -4,8 +4,24 @@ import { toast } from 'react-toastify';
 import { authService } from '../services/authService';
 import type { User } from 'firebase/auth';
 
+// Define a serializable user type
+interface SerializableUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  emailVerified: boolean;
+  isAnonymous: boolean;
+  tenantId: string | null;
+  providerData: any[];
+  metadata: {
+    creationTime?: string;
+    lastSignInTime?: string;
+  };
+}
+
 interface AuthState {
-  user: User | null;
+  user: SerializableUser | null;
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
@@ -16,6 +32,24 @@ const initialState: AuthState = {
   isAuthenticated: !!localStorage.getItem('idToken'),
   loading: false,
   error: null,
+};
+
+// Helper function to convert Firebase User to serializable object
+const serializeUser = (user: User): SerializableUser => {
+  return {
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+    emailVerified: user.emailVerified,
+    isAnonymous: user.isAnonymous,
+    tenantId: user.tenantId,
+    providerData: user.providerData,
+    metadata: {
+      creationTime: user.metadata.creationTime,
+      lastSignInTime: user.metadata.lastSignInTime,
+    },
+  };
 };
 
 export const registerAsync = createAsyncThunk(
@@ -37,8 +71,9 @@ export const getCurrentUserAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const user = await authService.getCurrentUser();
-      // console.log('Fetched user:', user);
-      return user;
+      // Convert Firebase User to serializable object
+      const serializableUser = serializeUser(user);
+      return serializableUser;
     } catch (error: any) {
       localStorage.removeItem('idToken');
       return rejectWithValue('Session expired');
