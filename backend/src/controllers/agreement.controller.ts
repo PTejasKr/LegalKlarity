@@ -46,7 +46,7 @@ const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) 
     const formData = new FormData();
     formData.append('file', fs.createReadStream(file.path), file.originalname);
 
-    const modelResponse = await axios.post(`${process.env.AI_MODEL_URL}/uploads`, formData, {
+    const modelResponse = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/uploads`, formData, {
         headers: {
             ...formData.getHeaders(),
         },
