@@ -30,6 +30,10 @@ src/db/serviceAccountKey.json
 *serviceAccountKey.json
 *firebase-adminsdk*.json
 
+# Firebase functions
+.firebase/
+firebase-debug.log*
+
 # Deployment documentation
 DEPLOYMENT.md
 
