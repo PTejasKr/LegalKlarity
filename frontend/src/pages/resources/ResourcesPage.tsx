@@ -305,26 +305,20 @@ const ResourcesPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Still Have Questions Section */}
-        <div className="bg-gray-50 rounded-2xl p-8 text-center mb-16 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-pink-400">Still Have Questions?</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
-            Our support team is here to help you understand legal documents and make the most of LegalKlarity.
-          </p>
-          <button className="bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition dark:bg-pink-700 dark:hover:bg-pink-600">
-            Contact Support
-          </button>
-        </div>
-
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl p-8 text-center text-white">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Try LegalKlarity</h2>
-          <p className="text-pink-100 mb-6 max-w-2xl mx-auto">
-            Experience the power of AI-driven legal analysis and protect your interests with confidence.
+        <div className="bg-gray-50 rounded-2xl p-8 text-center dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-pink-400">Ready to Transform Your Legal Understanding?</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+            Join thousands of users who trust LegalKlarity to decode complex legal language and protect their interests.
           </p>
-          <button className="bg-white text-pink-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
-            Start Free Trial
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition">
+              Start Free Trial
+            </button>
+            <button className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+              Contact Support
+            </button>
+          </div>
         </div>
       </div>
     </div>
