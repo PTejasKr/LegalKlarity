@@ -13,6 +13,10 @@ import json
 import os
 from datetime import datetime
 import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Flask app
 app = Flask(__name__)
