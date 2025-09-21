@@ -56,7 +56,26 @@ const Login: React.FC = () => {
       // Save token to localStorage
       const idToken = await userCredential.user.getIdToken();
       localStorage.setItem("idToken", idToken);
-      dispatch(getCurrentUserAsync());
+      
+      // Update auth state directly instead of relying on getCurrentUserAsync
+      dispatch({
+        type: 'auth/getCurrentUser/fulfilled',
+        payload: {
+          uid: userCredential.user.uid,
+          email: userCredential.user.email,
+          displayName: userCredential.user.displayName,
+          photoURL: userCredential.user.photoURL,
+          emailVerified: userCredential.user.emailVerified,
+          isAnonymous: userCredential.user.isAnonymous,
+          tenantId: userCredential.user.tenantId,
+          providerData: userCredential.user.providerData,
+          metadata: {
+            creationTime: userCredential.user.metadata.creationTime,
+            lastSignInTime: userCredential.user.metadata.lastSignInTime,
+          }
+        }
+      });
+      
       toast.success("Login successful!");
       setLoading(false);
       navigate("/dashboard");
@@ -74,36 +93,51 @@ const Login: React.FC = () => {
     try {
       const credential = await signInWithPopup(auth, provider);
 
-      if ((credential as any)._tokenResponse && (credential as any)._tokenResponse.idToken) {
-        // Save ID token to localStorage (from _tokenResponse.idToken)
-        const idToken = (credential as any)._tokenResponse.idToken;
-        localStorage.setItem("idToken", idToken);
+      // Get ID token properly from the user object
+      const idToken = await credential.user.getIdToken();
+      localStorage.setItem("idToken", idToken);
 
-        // Register user in backend (Firestore) if not already present
-        const user = credential.user;
-        try {
-          await dispatch(registerAsync({
-            email: user.email || '',
-            displayName: user.displayName || '',
-            region: '',
-            language: 'en',
-          })).unwrap();
-          setGoogleLoading(false);
-          toast.success("User login successfully");
-        } catch (regErr: any) {
-          // If already exists, ignore; else show error
-          if (regErr?.message && !regErr.message.includes('already exists')) {
-            toast.error(regErr.message || 'Failed to login user.');
-            // Optionally return here
-          }
-          setGoogleLoading(false);
-        }
-        dispatch(getCurrentUserAsync());
+      // Register user in backend (Firestore) if not already present
+      const user = credential.user;
+      try {
+        await dispatch(registerAsync({
+          email: user.email || '',
+          displayName: user.displayName || '',
+          region: '',
+          language: 'en',
+        })).unwrap();
         setGoogleLoading(false);
-        navigate("/dashboard");
-      } else {
-        toast.error("Google login failed. No user information available.");
+        toast.success("User login successfully");
+      } catch (regErr: any) {
+        // If already exists, ignore; else show error
+        if (regErr?.message && !regErr.message.includes('already exists')) {
+          toast.error(regErr.message || 'Failed to login user.');
+          // Optionally return here
+        }
+        setGoogleLoading(false);
       }
+      
+      // Update auth state directly instead of relying on getCurrentUserAsync
+      dispatch({
+        type: 'auth/getCurrentUser/fulfilled',
+        payload: {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          emailVerified: user.emailVerified,
+          isAnonymous: user.isAnonymous,
+          tenantId: user.tenantId,
+          providerData: user.providerData,
+          metadata: {
+            creationTime: user.metadata.creationTime,
+            lastSignInTime: user.metadata.lastSignInTime,
+          }
+        }
+      });
+      
+      setGoogleLoading(false);
+      navigate("/dashboard");
     } catch (error: any) {
       // Handle account-exists-with-different-credential for account linking
       if (error.code === "auth/account-exists-with-different-credential") {

@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 // import { useAppDispatch } from './hooks/redux';
@@ -28,45 +29,60 @@ import ResourcesPage from './pages/resources/ResourcesPage';
 import ContactPage from './pages/contact/ContactPage';
 import SolutionsPage from './pages/solutions/SolutionsPage';
 import DemoPage from './pages/demo/DemoPage';
-import PricingPage from './pages/pricing/PricingPage';
+
+// Lazy load components
+const Home = lazy(() => import("./pages/home/HomePage"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const SignUp = lazy(() => import("./pages/auth/SignUp"));
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const Settings = lazy(() => import("./pages/dashboard/Settings"));
+const RoleSelection = lazy(() => import("./pages/dashboard/agreement/RoleSelection"));
+const CasesList = lazy(() => import("./pages/dashboard/case/CasesList"));
+const AgreementProcess = lazy(() => import("./pages/dashboard/process/AgreementProcess"));
 
 function App() {
-  const dispatch = useAppDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
-  useEffect(() => {
-    dispatch(getCurrentUserAsync());
-  }, [dispatch]);
-
-  // Helper to extract targetGroup from query param and map to category
-  function SummaryPageWithTargetGroup() {
-    const location = useLocation();
-    const params = new URLSearchParams(location.search);
-    const targetGroup = params.get('targetGroup');
-    // Map role id to category prop
-    let category: 'individual' | 'institutional' | 'enterprise' = 'institutional';
-    if (targetGroup === 'citizen') category = 'individual';
-    else if (targetGroup === 'business') category = 'enterprise';
-    else if (targetGroup === 'student') category = 'institutional';
-    return <SummaryPage targetGroup={category} />;
+  if (loading) {
+    return <Loader />;
   }
 
   return (
     <>
+      <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900">
+        <Navbar />
+        <main className="flex-grow">
+          <Suspense fallback={<Loader />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" />} />
+              <Route path="/signup" element={!isAuthenticated ? <SignUp /> : <Navigate to="/dashboard" />} />
+              <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Login />} />
+              <Route path="/dashboard/settings" element={isAuthenticated ? <Settings /> : <Login />} />
+              <Route path="/dashboard/role-selection" element={isAuthenticated ? <RoleSelection /> : <Login />} />
+              <Route path="/dashboard/agreement/summary" element={isAuthenticated ? <LegalDocumentAnalyzer /> : <Login />} />
+              <Route path="/dashboard/case/case-details" element={isAuthenticated ? <CasesList /> : <Login />} />
+              <Route path="/dashboard/process/summary" element={isAuthenticated ? <AgreementProcess /> : <Login />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </Suspense>
+        </main>
+        <Chatbot />
+        <Footer />
+      </div>
       <ToastContainer
         position="bottom-right"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
-        closeButton={true}
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="dark"
+        theme="light"
       />
-
+      
       <div className="min-h-screen bg-white dark:bg-slate-900">
         <Navbar />
         <main className="">
