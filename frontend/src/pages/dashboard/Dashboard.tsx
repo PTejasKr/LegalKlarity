@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FileText, ListTodo, Scale, Bot } from "lucide-react";
+import { FileText, ListTodo, Scale } from "lucide-react";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -12,14 +12,6 @@ export default function Dashboard() {
       path: "/dashboard/role-selection",
       color: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
       hoverColor: "hover:bg-blue-100 dark:hover:bg-blue-900/50"
-    },
-    {
-      name: "AI Legal Assistant",
-      description: "Interactive chatbot for answering your legal questions in real-time.",
-      icon: Bot,
-      path: "/dashboard", // We'll need to implement this
-      color: "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
-      hoverColor: "hover:bg-amber-100 dark:hover:bg-amber-900/50"
     },
     {
       name: "Document Analysis",
@@ -83,7 +75,7 @@ export default function Dashboard() {
         {/* Features Grid */}
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Legal Tools</h3>
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
@@ -176,22 +168,6 @@ export default function Dashboard() {
                 </p>
                 <p className="text-sm text-gray-500 dark:text-slate-400">
                   Viewed yesterday
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center dark:bg-amber-900/30">
-                  <Bot className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  Asked about contract termination
-                </p>
-                <p className="text-sm text-gray-500 dark:text-slate-400">
-                  3 days ago
                 </p>
               </div>
             </div>
