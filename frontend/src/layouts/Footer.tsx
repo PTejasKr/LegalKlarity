@@ -34,10 +34,10 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider mb-4">Product</h3>
             <ul className="space-y-3">
               <li><a href="/features" className="text-gray-400 hover:text-white transition text-sm">Features</a></li>
-              <li><a href="/solutions" className="text-gray-400 hover:text-white transition text-sm">Solutions</a></li>
-              <li><a href="/pricing" className="text-gray-400 hover:text-white transition text-sm">Pricing</a></li>
+              <li><a href="/use-cases" className="text-gray-400 hover:text-white transition text-sm">Use Cases</a></li>
+              <li><a href="/resources" className="text-gray-400 hover:text-white transition text-sm">Resources</a></li>
               <li><a href="/demo" className="text-gray-400 hover:text-white transition text-sm">Demo</a></li>
-              <li><a href="/releases" className="text-gray-400 hover:text-white transition text-sm">Releases</a></li>
+              <li><a href="/pricing" className="text-gray-400 hover:text-white transition text-sm">Pricing</a></li>
             </ul>
           </div>
 
@@ -57,9 +57,9 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider mb-4">Resources</h3>
             <ul className="space-y-3">
-              <li><a href="/docs" className="text-gray-400 hover:text-white transition text-sm">Documentation</a></li>
-              <li><a href="/guides" className="text-gray-400 hover:text-white transition text-sm">Guides</a></li>
-              <li><a href="/community" className="text-gray-400 hover:text-white transition text-sm">Community</a></li>
+              <li><a href="/resources" className="text-gray-400 hover:text-white transition text-sm">Legal Guides</a></li>
+              <li><a href="/resources" className="text-gray-400 hover:text-white transition text-sm">Case Laws</a></li>
+              <li><a href="/resources" className="text-gray-400 hover:text-white transition text-sm">FAQs</a></li>
               <li><a href="/support" className="text-gray-400 hover:text-white transition text-sm">Support</a></li>
               <li><a href="/api" className="text-gray-400 hover:text-white transition text-sm">API</a></li>
             </ul>

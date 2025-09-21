@@ -19,6 +19,16 @@ import AgreementProcess from './pages/dashboard/process/AgreementProcess';
 import Dashboard from './pages/dashboard/Dashboard';
 import Settings from './pages/dashboard/Settings';
 import Chatbot from './pages/home/Chatbot';
+import AIChatbot from './pages/dashboard/AIChatbot';
+
+// New pages
+import FeaturesPage from './pages/features/FeaturesPage';
+import UseCasesPage from './pages/use-cases/UseCasesPage';
+import ResourcesPage from './pages/resources/ResourcesPage';
+import ContactPage from './pages/contact/ContactPage';
+import SolutionsPage from './pages/solutions/SolutionsPage';
+import DemoPage from './pages/demo/DemoPage';
+import PricingPage from './pages/pricing/PricingPage';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -64,10 +74,18 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<About />} />
             <Route path="/help" element={<Help />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/solutions" element={<SolutionsPage />} />
+            <Route path="/use-cases" element={<UseCasesPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/demo" element={<DemoPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/active" element={<div>frontend active</div>} />
             <Route path='/dashboard' element={isAuthenticated ? <Dashboard /> : <Login />} />
+            <Route path="/dashboard/ai-chatbot" element={isAuthenticated ? <AIChatbot /> : <Login />} />
             <Route path="/dashboard/settings" element={isAuthenticated ? <Settings /> : <Login />} />
             <Route path="/dashboard/role-selection" element={isAuthenticated ? <RoleSelection /> : <Login />} />
             <Route path="/dashboard/agreement/summary" element={isAuthenticated ? <SummaryPageWithTargetGroup /> : <Login />} />

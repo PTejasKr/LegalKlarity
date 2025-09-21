@@ -3,7 +3,7 @@ import { getAuth, signOut } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { getCurrentUserAsync } from "../store/authSlice";
-import { Menu, X, User, LogOut, Home, FileText } from "lucide-react";
+import { Menu, X, User, LogOut, Home, FileText, Users, BookOpen, Info, Mail } from "lucide-react";
 import ThemeToggle from "../components/ThemeToggle";
 
 const Navbar = () => {
@@ -29,6 +29,11 @@ const Navbar = () => {
 
   const navigation = [
     { name: "Home", href: "/", icon: Home },
+    { name: "Features", href: "/features", icon: FileText },
+    { name: "Use Cases", href: "/use-cases", icon: Users },
+    { name: "Resources", href: "/resources", icon: BookOpen },
+    { name: "About", href: "/about", icon: Info },
+    { name: "Contact", href: "/contact", icon: Mail },
     { name: "Dashboard", href: "/dashboard", icon: FileText, authenticated: true },
   ];
 
