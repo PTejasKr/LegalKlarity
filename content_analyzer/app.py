@@ -440,58 +440,80 @@ def enhanced_document_analysis():
     """
     Enhanced document analysis endpoint
     """
-    print("Received request to /enhanced_analysis")
-    if "file" not in request.files:
-        print("No file uploaded in request")
-        return jsonify({"error": "No file uploaded"}), 400
-    
-    file = request.files["file"]
-    print(f"Received file: {file.filename}")
-    if file.filename == "":
-        print("No file selected")
-        return jsonify({"error": "No file selected"}), 400
+    try:
+        print("Received request to /enhanced_analysis")
+        if "file" not in request.files:
+            print("No file uploaded in request")
+            return jsonify({"error": "No file uploaded"}), 400
+        
+        file = request.files["file"]
+        print(f"Received file: {file.filename}")
+        if file.filename == "":
+            print("No file selected")
+            return jsonify({"error": "No file selected"}), 400
 
-    # Extract text (using existing functions)
-    filename = file.filename.lower()
-    print(f"Processing file type: {filename}")
-    text = ""
-    
-    if filename.endswith(".pdf"):
-        print("Extracting PDF...")
-        text = extract_pdf(file.stream)
-    elif filename.endswith(".docx"):
-        print("Extracting DOCX...")
-        text = extract_docx(file.stream)
-    elif filename.endswith((".png", ".jpg", ".jpeg")):
-        print("Extracting image...")
-        text = extract_image(file.stream)
-    else:
-        print(f"Unsupported file type: {filename}")
-        return jsonify({"error": "Unsupported file type"}), 400
-    
-    print(f"Extracted text length: {len(text)}")
-    
-    # Check if it's a valid agreement (using existing function)
-    print("Classifying agreement...")
-    is_ok, details = classify_agreement(text)
-    print(f"Classification result: {is_ok}, details: {details}")
-    if not is_ok:
+        # Extract text (using existing functions)
+        filename = file.filename.lower()
+        print(f"Processing file type: {filename}")
+        text = ""
+        
+        if filename.endswith(".pdf"):
+            print("Extracting PDF...")
+            text = extract_pdf(file.stream)
+        elif filename.endswith(".docx"):
+            print("Extracting DOCX...")
+            text = extract_docx(file.stream)
+        elif filename.endswith((".png", ".jpg", ".jpeg")):
+            print("Extracting image...")
+            text = extract_image(file.stream)
+        else:
+            print(f"Unsupported file type: {filename}")
+            return jsonify({"error": "Unsupported file type"}), 400
+        
+        print(f"Extracted text length: {len(text)}")
+        if len(text) == 0:
+            print("Warning: No text extracted from file")
+            return jsonify({
+                "error": "Could not extract text from file",
+                "filename": file.filename
+            }), 400
+        
+        # Check if it's a valid agreement (using existing function)
+        print("Classifying agreement...")
+        is_ok, details = classify_agreement(text)
+        print(f"Classification result: {is_ok}, details: {details}")
+        if not is_ok:
+            return jsonify({
+                "error": "Rejected: Not a valid agreement.",
+                "details": details
+            }), 400
+        
+        # Perform enhanced analysis
+        print("Performing enhanced analysis...")
+        try:
+            analysis = analyze_legal_document(text)
+            print(f"Analysis completed successfully")
+        except Exception as analysis_error:
+            print(f"Error in analyze_legal_document: {analysis_error}")
+            import traceback
+            traceback.print_exc()
+            # Return fallback analysis
+            analysis = create_fallback_analysis(text, "unknown")
+        
         return jsonify({
-            "error": "Rejected: Not a valid agreement.",
-            "details": details
-        }), 400
-    
-    # Perform enhanced analysis
-    print("Performing enhanced analysis...")
-    analysis = analyze_legal_document(text)
-    print(f"Analysis completed: {type(analysis)}")
-    
-    return jsonify({
-        "filename": file.filename,
-        "extracted_text": text,
-        "analysis": analysis,
-        "timestamp": datetime.now().isoformat()
-    })
+            "filename": file.filename,
+            "extracted_text": text[:500] + "..." if len(text) > 500 else text,  # Limit text in response
+            "analysis": analysis,
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        print(f"Unexpected error in enhanced_document_analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "error": f"Internal server error: {str(e)}",
+            "timestamp": datetime.now().isoformat()
+        }), 500
 
 @app.route("/chat", methods=["POST"])
 def document_chat():
