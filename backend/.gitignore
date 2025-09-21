@@ -27,7 +27,11 @@ Thumbs.db
 
 # Firebase service account keys
 src/db/serviceAccountKey.json
-legalklarity-firebase-adminsdk-fbsvc-554b402110.json
+*serviceAccountKey.json
+*firebase-adminsdk*.json
+
+# Deployment documentation
+DEPLOYMENT.md
 
 # Temporary files
 *.tmp

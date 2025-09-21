@@ -14,7 +14,7 @@ if (isFirebaseEnv) {
   // const functions = require("firebase-functions");
   exports.api = functions.https.onRequest(app);
 } else {
-  // Local development
+  // Local development and Render.com
   const PORT = process.env.PORT || 8080;
   app.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
