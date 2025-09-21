@@ -1,27 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-// import { useAppDispatch } from './hooks/redux';
-import About from './pages/general/About';
-import Help from './pages/general/Help';
-import HomePage from './pages/home/HomePage';
-import Footer from './layouts/Footer';
-import Navbar from './layouts/Navbar';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import RoleSelection from './pages/dashboard/agreement/RoleSelection';
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from './hooks/redux';
-import { getCurrentUserAsync } from './store/authSlice';
-import SummaryPage from './pages/dashboard/agreement/SummaryPage';
-import { useLocation } from 'react-router-dom';
-import CasesList from './pages/dashboard/case/CasesList';
-import AgreementProcess from './pages/dashboard/process/AgreementProcess';
-import Dashboard from './pages/dashboard/Dashboard';
-import Settings from './pages/dashboard/Settings';
-import Chatbot from './pages/home/Chatbot';
-
 import { lazy, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./layouts/Navbar";
@@ -30,6 +8,16 @@ import Chatbot from "./components/chatbot/Chatbot";
 import { useAppSelector } from "./hooks/redux";
 import Loader from "./components/common/Loader";
 import LegalDocumentAnalyzer from './pages/dashboard/agreement/LegalDocumentAnalyzer';
+
+// Lazy load components
+const Home = lazy(() => import("./pages/home/HomePage"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const SignUp = lazy(() => import("./pages/auth/SignUp"));
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const Settings = lazy(() => import("./pages/dashboard/Settings"));
+const RoleSelection = lazy(() => import("./pages/dashboard/agreement/RoleSelection"));
+const CasesList = lazy(() => import("./pages/dashboard/case/CasesList"));
+const AgreementProcess = lazy(() => import("./pages/dashboard/process/AgreementProcess"));
 
 function App() {
   const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
