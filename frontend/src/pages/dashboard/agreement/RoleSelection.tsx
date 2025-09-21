@@ -122,7 +122,7 @@ const RoleSelection = () => {
   const handleSelect = (roleId: string) => {
     setSlideOut(roleId);
     setTimeout(() => {
-      // Redirect directly to the enhanced summary page without targetGroup parameter
+      // Redirect directly to the new Legal Document Analyzer
       navigate(`/dashboard/agreement/summary`);
     }, 300);
   };
