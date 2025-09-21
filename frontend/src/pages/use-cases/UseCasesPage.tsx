@@ -27,14 +27,14 @@ const UseCasesPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Use Cases for Every Legal Need
           </h1>
-          <p className="text-xl text-gray-600 dark:text-slate-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             LegalKlarity empowers different user groups with tailored legal intelligence to make informed decisions and protect their interests.
           </p>
         </div>
@@ -46,11 +46,11 @@ const UseCasesPage: React.FC = () => {
             return (
               <div 
                 key={index} 
-                className="bg-white rounded-xl shadow-sm p-8 dark:bg-slate-800 border border-gray-200 dark:border-slate-700"
+                className="bg-white rounded-xl shadow-sm p-8 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
               >
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/4 mb-6 md:mb-0 flex justify-center md:justify-start">
-                    <div className="w-16 h-16 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center dark:bg-indigo-900/30 dark:text-indigo-400">
+                    <div className="w-16 h-16 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center dark:bg-teal-900/30 dark:text-teal-400">
                       <Icon className="h-8 w-8" />
                     </div>
                   </div>
@@ -59,17 +59,17 @@ const UseCasesPage: React.FC = () => {
                     
                     <div className="mb-6">
                       <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Problem</h3>
-                      <p className="text-gray-600 dark:text-slate-400">{useCase.problem}</p>
+                      <p className="text-gray-600 dark:text-gray-400">{useCase.problem}</p>
                     </div>
                     
                     <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-indigo-600 dark:text-indigo-400 mb-2">How LegalKlarity Helps</h3>
-                      <p className="text-gray-600 dark:text-slate-400">{useCase.solution}</p>
+                      <h3 className="text-lg font-semibold text-teal-600 dark:text-teal-400 mb-2">How LegalKlarity Helps</h3>
+                      <p className="text-gray-600 dark:text-gray-400">{useCase.solution}</p>
                     </div>
                     
                     <div>
                       <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-2">Example Outcome</h3>
-                      <p className="text-gray-600 dark:text-slate-400">{useCase.example}</p>
+                      <p className="text-gray-600 dark:text-gray-400">{useCase.example}</p>
                     </div>
                   </div>
                 </div>
@@ -79,12 +79,12 @@ const UseCasesPage: React.FC = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="mt-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-center text-white dark:from-indigo-700 dark:to-purple-700">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">See How LegalKlarity Can Help You</h2>
-          <p className="text-indigo-100 mb-6 max-w-2xl mx-auto">
+        <div className="mt-16 bg-gray-50 rounded-2xl p-8 text-center dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-teal-400">See How LegalKlarity Can Help You</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
             Upload your first document and experience the power of AI-driven legal analysis tailored to your needs.
           </p>
-          <button className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700">
+          <button className="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
             Upload Document Now
           </button>
         </div>

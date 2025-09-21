@@ -42,14 +42,14 @@ const FeaturesPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Powerful Legal Intelligence Features
           </h1>
-          <p className="text-xl text-gray-600 dark:text-slate-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Our platform combines cutting-edge AI with legal expertise to deliver unprecedented value in understanding and managing legal documents.
           </p>
         </div>
@@ -61,15 +61,15 @@ const FeaturesPage: React.FC = () => {
             return (
               <div 
                 key={index} 
-                className="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition dark:bg-slate-800 dark:hover:shadow-slate-800/50 border border-gray-200 dark:border-slate-700"
+                className="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition dark:bg-gray-800 dark:hover:shadow-slate-800/50 border border-gray-200 dark:border-gray-700"
               >
-                <div className="w-12 h-12 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6 dark:bg-indigo-900/30 dark:text-indigo-400">
+                <div className="w-12 h-12 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mb-6 dark:bg-green-900/30 dark:text-green-400">
                   <Icon className="h-6 w-6" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-slate-400 mb-4">{feature.description}</p>
-                <p className="text-gray-500 dark:text-slate-500 text-sm">{feature.details}</p>
-                <button className="mt-4 text-indigo-600 font-medium hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 transition">
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{feature.description}</p>
+                <p className="text-gray-500 dark:text-gray-500 text-sm">{feature.details}</p>
+                <button className="mt-4 text-green-600 font-medium hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition">
                   Try Now →
                 </button>
               </div>
@@ -78,18 +78,18 @@ const FeaturesPage: React.FC = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-center text-white dark:from-indigo-700 dark:to-purple-700">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to Transform Your Legal Workflow?</h2>
-          <p className="text-indigo-100 mb-6 max-w-2xl mx-auto">
+        <div className="bg-gray-50 rounded-2xl p-8 text-center dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-green-400">Ready to Transform Your Legal Workflow?</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
             Join thousands of legal professionals who have already revolutionized their practice with LegalKlarity.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700">
+            <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
               Get Started Free
             </button>
             <button 
               onClick={() => window.location.href = '/pricing'}
-              className="bg-indigo-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-900 transition dark:bg-indigo-900 dark:hover:bg-indigo-800"
+              className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
             >
               View Pricing
             </button>

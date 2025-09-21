@@ -58,14 +58,14 @@ const ResourcesPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Legal Resources & Knowledge Hub
           </h1>
-          <p className="text-xl text-gray-600 dark:text-slate-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Empowering you with knowledge through comprehensive guides, case studies, and expert insights.
           </p>
         </div>
@@ -77,18 +77,18 @@ const ResourcesPage: React.FC = () => {
             return (
               <div 
                 key={index} 
-                className="bg-white rounded-xl shadow-sm p-8 dark:bg-slate-800 border border-gray-200 dark:border-slate-700"
+                className="bg-white rounded-xl shadow-sm p-8 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
               >
-                <div className="w-12 h-12 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6 dark:bg-indigo-900/30 dark:text-indigo-400">
+                <div className="w-12 h-12 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center mb-6 dark:bg-pink-900/30 dark:text-pink-400">
                   <Icon className="h-6 w-6" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">{resource.title}</h3>
-                <p className="text-gray-600 dark:text-slate-400 mb-6">{resource.description}</p>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">{resource.description}</p>
                 <ul className="space-y-3">
                   {resource.items.map((item, itemIndex) => (
                     <li key={itemIndex} className="flex items-start">
-                      <span className="text-indigo-600 mr-2 dark:text-indigo-400">•</span>
-                      <span className="text-gray-600 dark:text-slate-400">{item}</span>
+                      <span className="text-pink-600 mr-2 dark:text-pink-400">•</span>
+                      <span className="text-gray-600 dark:text-gray-400">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -98,29 +98,29 @@ const ResourcesPage: React.FC = () => {
         </div>
 
         {/* FAQ Section */}
-        <div className="bg-white rounded-xl shadow-sm p-8 mb-16 dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+        <div className="bg-white rounded-xl shadow-sm p-8 mb-16 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center mb-8">
-            <HelpCircle className="h-8 w-8 text-indigo-600 mr-3 dark:text-indigo-400" />
+            <HelpCircle className="h-8 w-8 text-pink-600 mr-3 dark:text-pink-400" />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Frequently Asked Questions</h2>
           </div>
           
           <div className="space-y-6">
             {faqs.map((faq, index) => (
-              <div key={index} className="border-b border-gray-200 pb-6 last:border-0 last:pb-0 dark:border-slate-700">
+              <div key={index} className="border-b border-gray-200 pb-6 last:border-0 last:pb-0 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{faq.question}</h3>
-                <p className="text-gray-600 dark:text-slate-400">{faq.answer}</p>
+                <p className="text-gray-600 dark:text-gray-400">{faq.answer}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-center text-white dark:from-indigo-700 dark:to-purple-700">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Need More Help?</h2>
-          <p className="text-indigo-100 mb-6 max-w-2xl mx-auto">
+        <div className="bg-gray-50 rounded-2xl p-8 text-center dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-pink-400">Need More Help?</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
             Our legal experts are here to assist you with complex questions and provide personalized guidance.
           </p>
-          <button className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700">
+          <button className="bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition">
             Contact Support
           </button>
         </div>
