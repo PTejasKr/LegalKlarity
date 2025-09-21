@@ -148,105 +148,80 @@ def classify_agreement(text):
         details["reason"] = "low_confidence"
     return accept, details
 
-# Enhanced document analysis function
-def analyze_legal_document(text, document_type=None):
+# Enhanced document analysis function using Legal-Document-Analyzer approach
+def analyze_legal_document(text, document_type="legal"):
     """
-    Comprehensive legal document analysis using Gemini AI
+    Analyze a legal document and provide structured insights using Legal-Document-Analyzer approach.
+    Returns a dictionary with summary, key terms, clauses, risks,
+    recommendations, and critical legal metadata.
     
     Args:
         text (str): Extracted text from legal document
-        document_type (str, optional): Type of document (auto-detected if None)
+        document_type (str): Type of document (default: "legal")
     
     Returns:
         dict: Structured analysis with 12 categories
     """
     
-    # Auto-detect document type if not provided
-    if not document_type:
-        document_type = detect_document_type(text)
-    
     # If Gemini is not available, use fallback analysis
     if not GEMINI_AVAILABLE:
         return create_fallback_analysis(text, document_type)
     
-    # Enhanced prompt engineering for comprehensive analysis
+    # Enhanced prompt from Legal-Document-Analyzer approach
     prompt = f"""
-    Analyze the following {document_type or 'legal document'} and provide a comprehensive analysis.
-    Return ONLY valid JSON that strictly matches this schema:
-    
+    You are an expert legal document analyst reviewing a {document_type}.
+
+    Each field must be filled as defined below:
+
+    1. summary: A 2-3 sentence plain English summary of the document. Avoid legal jargon.  
+    2. key_terms: A list of important legal terms or phrases with simple, non-legal definitions (e.g., "Indemnity": "One party promises to cover losses if something goes wrong").  
+    3. main_clauses: A list of the main sections/clauses in the document, explained briefly in plain English.  
+    4. risks: Any potential risks, unfair obligations, or concerning clauses for the user.  
+    5. recommendations: Practical suggestions for what the user should pay attention to or clarify.  
+    6. parties: A list naming and briefly describing the main parties involved. If unclear, return [].  
+    7. jurisdiction: The governing law or legal jurisdiction. If not found, return "".
+    8. obligations: A list of key duties or actions each party must perform (Do Not search for specific obligations, only general duties or actions).  
+    9. critical_dates: Important dates, deadlines, or timeframes mentioned.  
+    10. missing_or_unusual: Clauses that are missing, unusual, or raise concerns (e.g., "No termination clause found").  
+    11. compliance_issues: Any explicit compliance or regulatory issues (e.g., data privacy, employment law, consumer protection).  
+    12. next_steps: Action items or questions the user should ask before agreeing/signing.
+
+    Analyze the document and respond ONLY in valid JSON with these fields:
+
     {{
-        "summary": "Brief 2-3 sentence overview of the entire document",
-        "key_terms": [
-            {{
-                "term": "Defined term",
-                "definition": "Clear definition from the document"
-            }}
-        ],
-        "main_clauses": [
-            {{
-                "name": "Clause name/title",
-                "description": "Brief description of what this clause covers"
-            }}
-        ],
-        "critical_dates": [
-            {{
-                "date": "YYYY-MM-DD or date range",
-                "event": "What happens on this date"
-            }}
-        ],
-        "parties": [
-            {{
-                "name": "Party name",
-                "role": "Their role in the agreement"
-            }}
-        ],
-        "jurisdiction": "Governing law and jurisdiction information",
-        "obligations": [
-            {{
-                "party": "Which party",
-                "responsibility": "What they must do"
-            }}
-        ],
-        "risks": [
-            {{
-                "risk": "Identified risk",
-                "severity": "high/medium/low",
-                "description": "Explanation of the risk"
-            }}
-        ],
-        "recommendations": [
-            "Actionable recommendation to address identified issues"
-        ],
-        "missing_clauses": [
-            {{
-                "clause": "Missing clause name",
-                "importance": "Why it's important"
-            }}
-        ],
-        "compliance_issues": [
-            {{
-                "issue": "Compliance concern",
-                "regulation": "Relevant law/regulation (if identifiable)"
-            }}
-        ],
-        "next_steps": [
-            "Action item that should be taken next"
-        ]
+    "summary": "2-3 sentence plain English summary (avoid legal jargon).",
+    "key_terms": ["term1: definition1", "term2: definition2", ...],
+    "main_clauses": ["main clause 1", "main clause 2", ...],
+    "risks": ["notable risk 1", "notable risk 2", ...],
+    "recommendations": ["practical recommendation 1", "practical recommendation 2", ...],
+    "parties": ["Party 1: role", "Party 2: role", ...],
+    "jurisdiction": "Legal jurisdiction or governing law, or empty if not stated, ...",
+    "obligations": ["**obligor1**: obligation 1", "**obligor2**: obligation 2", ..., "**obligee 1**: obligation 1", "**obligee 2**: obligation 2", ...],
+    "critical_dates": ["important date or deadline", ...],
+    "missing_or_unusual": ["clause that is missing/unusual", ...],
+    "compliance_issues": ["compliance or regulatory concern", ...],
+    "next_steps": ["question to ask lawyer", "action before signing"]
     }}
-    
-    Document Text:
-    {text[:30000]}  # Limit to prevent token overflow
+
+    Rules:
+    - If information is not found, return an empty string ("") or empty list ([]).
+    - Do not include explanations outside the JSON.
+    - Keep responses concise and accessible for non-lawyers.
+    - While generating each field, add more and more explanation and context to each field.
+    - Strictly return JSON with the specified fields and no additional fields.
+
+    Document: {text[:30000]}  # Limit to prevent token overflow
     """
-    
+
     try:
         # Initialize Gemini model
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Generate response
         response = model.generate_content(prompt)
         
         # Parse and validate JSON response
-        analysis = json.loads(response.text)
+        analysis = parse_gemini_response(response.text)
         return analysis
         
     except json.JSONDecodeError as e:
@@ -265,10 +240,42 @@ def analyze_legal_document(text, document_type=None):
             "obligations": [],
             "risks": [],
             "recommendations": [],
-            "missing_clauses": [],
+            "missing_or_unusual": [],
             "compliance_issues": [],
             "next_steps": []
         }
+
+# Response parsing function from Legal-Document-Analyzer approach
+def parse_gemini_response(response: str) -> dict:
+    """Parse the response from Gemini and return a dictionary."""
+    try:
+        # Check if the response is empty
+        if not response.strip():
+            return {}
+
+        # Find the first occurrence of the opening curly bracket (`{`)
+        start_index = response.find("{")
+        if start_index == -1:
+            return {}
+
+        # Find the last occurrence of the closing curly bracket (`}`)
+        end_index = response.rfind("}")
+        if end_index == -1:
+            return {}
+
+        # Ensure the start_index is before the end_index
+        if start_index > end_index:
+            return {}
+
+        # Trim the response to include only the valid JSON
+        trimmed_response = response[start_index:end_index + 1]
+
+        # Parse the JSON response
+        parsed_data = json.loads(trimmed_response)
+        return parsed_data
+    except json.JSONDecodeError as e:
+        # Fallback in case of invalid JSON
+        return {"error": f"Failed to parse response: {str(e)}", "raw": response}
 
 # Document type detection
 def detect_document_type(text):
