@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Upload, FileText, Loader2, Key, ClipboardList, AlertTriangle, Lightbulb, Users, Gavel, Calendar, FileQuestion, ShieldCheck, Rocket, Download, Printer, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 import api from "../../../utils/baseApi";
+import { useAppSelector } from "../../../hooks/redux";
 
 const LegalDocumentAnalyzer = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -11,6 +12,9 @@ const LegalDocumentAnalyzer = () => {
   const [activeTab, setActiveTab] = useState("summary");
   const [targetGroup, setTargetGroup] = useState("individual");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Get authenticated user from Redux store
+  const { user } = useAppSelector((state) => state.auth);
 
   const handleFiles = (files: FileList) => {
     if (files && files[0]) {
@@ -75,7 +79,7 @@ const LegalDocumentAnalyzer = () => {
       // Create FormData for file upload
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('uid', 'test-user-id'); // Temporary test user ID
+      formData.append('uid', user?.uid || 'test-user-id'); // Use actual user ID or fallback to test ID
       formData.append('targetGroup', targetGroup);
       formData.append('language', 'en');
 
