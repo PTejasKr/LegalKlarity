@@ -45,7 +45,7 @@ export const authService = {
     return response.data.data; 
   },
 
-  async getCurrentUser(): Promise<User> {
+  async getCurrentUser(): Promise<any> {
     if (import.meta.env.VITE_USE_MOCK_API === 'true') {
       // Mock current user
       return new Promise((resolve) => {
@@ -55,7 +55,7 @@ export const authService = {
             ...mockUser,
             reload: async () => {},
             toJSON: () => ({})
-          } as User;
+          };
           resolve(mockFirebaseUser);
         }, 500);
       });

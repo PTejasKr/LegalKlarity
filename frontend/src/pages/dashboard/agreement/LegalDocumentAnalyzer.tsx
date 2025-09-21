@@ -115,24 +115,6 @@ const LegalDocumentAnalyzer = () => {
     }
   };
 
-  // Helper function to render list items
-  const renderListItems = (items: string[] | undefined, icon?: React.ReactNode) => {
-    if (!items || items.length === 0) {
-      return <p className="text-muted-foreground">No information available.</p>;
-    }
-
-    return (
-      <ul className="space-y-2">
-        {items.map((item, index) => (
-          <li key={index} className="flex items-start gap-2">
-            {icon && <span className="mt-1 flex-shrink-0">{icon}</span>}
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
   // Helper function to render key terms
   const renderKeyTerms = (terms: string[] | undefined) => {
     if (!terms || terms.length === 0) {
@@ -141,7 +123,7 @@ const LegalDocumentAnalyzer = () => {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {terms.map((term, index) => {
+        {terms.map((term: string, index: number) => {
           // Split the term into key and definition
           const [key, definition] = term.includes(": ") ? term.split(": ") : [term, ""];
           return (
@@ -163,7 +145,7 @@ const LegalDocumentAnalyzer = () => {
 
     return (
       <div className="space-y-4">
-        {clauses.map((clause, index) => (
+        {clauses.map((clause: any, index: number) => (
           <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 dark:bg-slate-800 dark:border-slate-700">
             <h4 className="font-semibold text-blue-600 dark:text-blue-400">{clause.title}</h4>
             {clause.explanation && <p className="text-sm text-gray-500 mt-1 dark:text-slate-400">{clause.explanation}</p>}
@@ -182,6 +164,24 @@ const LegalDocumentAnalyzer = () => {
           </div>
         ))}
       </div>
+    );
+  };
+
+  // Helper function to render list items
+  const renderListItems = (items: string[] | undefined, icon?: React.ReactNode) => {
+    if (!items || items.length === 0) {
+      return <p className="text-muted-foreground">No information available.</p>;
+    }
+
+    return (
+      <ul className="space-y-2">
+        {items.map((item: string, index: number) => (
+          <li key={index} className="flex items-start gap-2">
+            {icon && <span className="mt-1 flex-shrink-0">{icon}</span>}
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
     );
   };
 
@@ -284,21 +284,21 @@ ${analysis.analysis.next_steps ? analysis.analysis.next_steps.join("\n") : "No n
   <div class="section">
     <h2 class="section-title">Key Terms</h2>
     <ul>
-      ${(analysis.analysis.key_terms || []).map(term => `<li>${term}</li>`).join('')}
+      ${(analysis.analysis.key_terms || []).map((term: string) => `<li>${term}</li>`).join('')}
     </ul>
   </div>
   
   <div class="section">
     <h2 class="section-title">Main Risks</h2>
     <ul>
-      ${(analysis.analysis.risks || []).map(risk => `<li>${risk}</li>`).join('')}
+      ${(analysis.analysis.risks || []).map((risk: string) => `<li>${risk}</li>`).join('')}
     </ul>
   </div>
   
   <div class="section">
     <h2 class="section-title">Recommendations</h2>
     <ul>
-      ${(analysis.analysis.recommendations || []).map(rec => `<li>${rec}</li>`).join('')}
+      ${(analysis.analysis.recommendations || []).map((rec: string) => `<li>${rec}</li>`).join('')}
     </ul>
   </div>
 </body>

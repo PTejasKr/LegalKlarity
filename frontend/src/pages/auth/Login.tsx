@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../../utils/firebase";
 import { toast } from "react-toastify";
-import { getCurrentUserAsync, registerAsync } from "../../store/authSlice";
+import { registerAsync } from "../../store/authSlice";
 import { useAppDispatch } from "../../hooks/redux";
 
 const Login: React.FC = () => {

@@ -6,9 +6,9 @@ const ResourcesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
   // Refs for each section
-  const legalGuidesRef = useRef<HTMLDivElement>(null);
-  const caseLawsRef = useRef<HTMLDivElement>(null);
-  const faqsRef = useRef<HTMLDivElement>(null);
+  const legalGuidesRef = useRef<HTMLDivElement | null>(null);
+  const caseLawsRef = useRef<HTMLDivElement | null>(null);
+  const faqsRef = useRef<HTMLDivElement | null>(null);
 
   // Legal Guides Data
   const legalGuides = [
@@ -121,7 +121,7 @@ const ResourcesPage: React.FC = () => {
   );
 
   // Scroll to section function
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 

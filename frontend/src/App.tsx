@@ -47,7 +47,6 @@ const LegalDocumentAnalyzer = lazy(() => import("./pages/dashboard/agreement/Leg
 function App() {
   const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const location = useLocation();
 
   useEffect(() => {
     dispatch(getCurrentUserAsync());

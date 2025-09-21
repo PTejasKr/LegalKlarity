@@ -3,7 +3,7 @@ import { signOut } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 
-import { getCurrentUserAsync, logout } from "../store/authSlice";
+import { logout } from "../store/authSlice";
 import { Menu, X, User, LogOut, Home, FileText, Users, BookOpen, Info, Mail } from "lucide-react";
 
 import ThemeToggle from "../components/ThemeToggle";

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { User, Users, Building, FileText, Shield, Zap, CheckCircle } from 'lucide-react';
+import { User, Users, Building, Shield, Zap, CheckCircle } from 'lucide-react';
 
 const UseCasesPage: React.FC = () => {
   return (
