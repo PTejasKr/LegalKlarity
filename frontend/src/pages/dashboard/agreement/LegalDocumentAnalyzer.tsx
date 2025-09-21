@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
-import { Upload, FileText, Loader2, Key, ClipboardList, AlertTriangle, Lightbulb, Users, Gavel, Calendar, FileQuestion, ShieldCheck, Rocket } from "lucide-react";
+import { Upload, FileText, Loader2, Key, ClipboardList, AlertTriangle, Lightbulb, Users, Gavel, Calendar, FileQuestion, ShieldCheck, Rocket, Download, Printer, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
-// Remove imports that don't exist
+import api from "../../../utils/baseApi";
 
 const LegalDocumentAnalyzer = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -9,8 +9,8 @@ const LegalDocumentAnalyzer = () => {
   const [analysis, setAnalysis] = useState<any>(null);
   const [dragActive, setDragActive] = useState(false);
   const [activeTab, setActiveTab] = useState("summary");
+  const [targetGroup, setTargetGroup] = useState("individual");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // Remove useAppSelector since we don't have proper imports
 
   const handleFiles = (files: FileList) => {
     if (files && files[0]) {
@@ -21,13 +21,13 @@ const LegalDocumentAnalyzer = () => {
       // Validate file type
       if (!fileType.match("application/pdf") && 
           !fileType.match("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-        console.log("Invalid file type: Please upload a PDF or DOCX file.");
+        alert("Invalid file type: Please upload a PDF or DOCX file.");
         return;
       }
 
       // Validate file size (limit to 200MB)
       if (fileSize > 200 * 1024 * 1024) {
-        console.log("File too large: Please upload a file smaller than 200MB.");
+        alert("File too large: Please upload a file smaller than 200MB.");
         return;
       }
 
@@ -72,68 +72,33 @@ const LegalDocumentAnalyzer = () => {
     setIsAnalyzing(true);
     
     try {
-      // In a real implementation, you would call your API here
-      // For now, let's simulate a response
-      setTimeout(() => {
-        const mockAnalysis = {
-          summary: "This is a sample legal document summary. The document outlines the terms and conditions of an agreement between parties.",
-          key_terms: [
-            "Term 1: Definition of term 1",
-            "Term 2: Definition of term 2",
-            "Term 3: Definition of term 3"
-          ],
-          main_clauses: [
-            "Clause 1: Description of clause 1",
-            "Clause 2: Description of clause 2",
-            "Clause 3: Description of clause 3"
-          ],
-          risks: [
-            "Risk 1: Description of potential risk",
-            "Risk 2: Description of another risk"
-          ],
-          recommendations: [
-            "Recommendation 1: Suggested action",
-            "Recommendation 2: Another suggested action"
-          ],
-          parties: [
-            "Party 1: Role of party 1",
-            "Party 2: Role of party 2"
-          ],
-          jurisdiction: "Applicable law and jurisdiction",
-          obligations: [
-            "**Party 1**: Obligation of party 1",
-            "**Party 2**: Obligation of party 2"
-          ],
-          critical_dates: [
-            "Date 1: Important deadline",
-            "Date 2: Another important date"
-          ],
-          missing_or_unusual: [
-            "Missing clause: Description of missing clause",
-            "Unusual clause: Description of unusual clause"
-          ],
-          compliance_issues: [
-            "Compliance issue 1: Description of compliance concern",
-            "Compliance issue 2: Another compliance concern"
-          ],
-          next_steps: [
-            "Next step 1: Recommended action",
-            "Next step 2: Another recommended action"
-          ]
-        };
-        
-        setAnalysis({
-          analysis: mockAnalysis,
-          filename: file.name,
-          timestamp: new Date().toISOString()
-        });
-        
-        console.log("Analysis complete!");
-        setIsAnalyzing(false);
-      }, 2000);
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('uid', 'test-user-id'); // Temporary test user ID
+      formData.append('targetGroup', targetGroup);
+      formData.append('language', 'en');
+
+      // Call the backend API for enhanced agreement analysis
+      const response = await api.post('/api/v1/agreements/enhanced-analysis', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log("API Response:", response.data);
+
+      setAnalysis({
+        analysis: response.data.data.analysis,
+        filename: response.data.data.filename,
+        timestamp: new Date().toISOString()
+      });
+      
+      console.log("Analysis complete!");
+      setIsAnalyzing(false);
     } catch (error: any) {
       console.error("Analysis error:", error);
-      console.log("Analysis failed: " + (error.message || "Failed to analyze the document. Please try again."));
+      alert("Analysis failed: " + (error.message || "Failed to analyze the document. Please try again."));
       setIsAnalyzing(false);
     }
   };
@@ -186,6 +151,194 @@ const LegalDocumentAnalyzer = () => {
     );
   };
 
+  // Helper function to render clauses (for enterprise target group)
+  const renderClauses = (clauses: any[] | undefined) => {
+    if (!clauses || clauses.length === 0) {
+      return <p className="text-muted-foreground">No clauses available.</p>;
+    }
+
+    return (
+      <div className="space-y-4">
+        {clauses.map((clause, index) => (
+          <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 dark:bg-slate-800 dark:border-slate-700">
+            <h4 className="font-semibold text-blue-600 dark:text-blue-400">{clause.title}</h4>
+            {clause.explanation && <p className="text-sm text-gray-500 mt-1 dark:text-slate-400">{clause.explanation}</p>}
+            {clause.risk && clause.risk !== "N/A" && (
+              <div className="mt-2 flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                <span className="text-sm"><strong>Risk:</strong> {clause.risk}</span>
+              </div>
+            )}
+            {clause.improvement && clause.improvement !== "N/A" && (
+              <div className="mt-2 flex items-start gap-2">
+                <Lightbulb className="h-4 w-4 text-blue-500 mt-0.5" />
+                <span className="text-sm"><strong>Improvement:</strong> {clause.improvement}</span>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Download report function
+  const downloadReport = () => {
+    if (!analysis) return;
+    
+    const reportContent = `
+LEGAL DOCUMENT ANALYSIS REPORT
+==============================
+
+Document: ${analysis.filename}
+Analyzed on: ${new Date(analysis.timestamp).toLocaleString()}
+
+SUMMARY
+-------
+${analysis.analysis.summary || "No summary available"}
+
+KEY TERMS
+---------
+${analysis.analysis.key_terms ? analysis.analysis.key_terms.join("\n") : "No key terms defined"}
+
+MAIN CLAUSES
+------------
+${analysis.analysis.main_clauses ? analysis.analysis.main_clauses.join("\n") : "No main clauses defined"}
+
+RISKS
+-----
+${analysis.analysis.risks ? analysis.analysis.risks.join("\n") : "No risks identified"}
+
+RECOMMENDATIONS
+---------------
+${analysis.analysis.recommendations ? analysis.analysis.recommendations.join("\n") : "No recommendations provided"}
+
+PARTIES
+-------
+${analysis.analysis.parties ? analysis.analysis.parties.join("\n") : "No parties identified"}
+
+JURISDICTION
+------------
+${analysis.analysis.jurisdiction || "Not specified"}
+
+OBLIGATIONS
+-----------
+${analysis.analysis.obligations ? analysis.analysis.obligations.join("\n") : "No obligations defined"}
+
+CRITICAL DATES
+--------------
+${analysis.analysis.critical_dates ? analysis.analysis.critical_dates.join("\n") : "No critical dates identified"}
+
+MISSING OR UNUSUAL CLAUSES
+--------------------------
+${analysis.analysis.missing_or_unusual ? analysis.analysis.missing_or_unusual.join("\n") : "No missing or unusual clauses identified"}
+
+COMPLIANCE ISSUES
+-----------------
+${analysis.analysis.compliance_issues ? analysis.analysis.compliance_issues.join("\n") : "No compliance issues identified"}
+
+NEXT STEPS
+----------
+${analysis.analysis.next_steps ? analysis.analysis.next_steps.join("\n") : "No next steps provided"}
+    `.trim();
+
+    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `legal-analysis-${analysis.filename.replace(/\.[^/.]+$/, "")}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Print summary function
+  const printSummary = () => {
+    if (!analysis) return;
+    
+    const printContent = `
+<html>
+<head>
+  <title>Legal Document Analysis - ${analysis.filename}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1, h2, h3 { color: #333; }
+    .section { margin-bottom: 20px; }
+    .section-title { border-bottom: 2px solid #333; padding-bottom: 5px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Legal Document Analysis Report</h1>
+  <p><strong>Document:</strong> ${analysis.filename}</p>
+  <p><strong>Analyzed on:</strong> ${new Date(analysis.timestamp).toLocaleString()}</p>
+  
+  <div class="section">
+    <h2 class="section-title">Summary</h2>
+    <p>${analysis.analysis.summary || "No summary available"}</p>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">Key Terms</h2>
+    <ul>
+      ${(analysis.analysis.key_terms || []).map(term => `<li>${term}</li>`).join('')}
+    </ul>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">Main Risks</h2>
+    <ul>
+      ${(analysis.analysis.risks || []).map(risk => `<li>${risk}</li>`).join('')}
+    </ul>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">Recommendations</h2>
+    <ul>
+      ${(analysis.analysis.recommendations || []).map(rec => `<li>${rec}</li>`).join('')}
+    </ul>
+  </div>
+</body>
+</html>
+    `.trim();
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
+
+  // Share analysis function
+  const shareAnalysis = async () => {
+    if (!analysis) return;
+    
+    const shareData = {
+      title: 'Legal Document Analysis',
+      text: `Check out this legal document analysis for ${analysis.filename}: ${analysis.analysis.summary || 'No summary available'}`,
+      url: window.location.href
+    };
+    
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: copy to clipboard
+        const textToCopy = `Legal Document Analysis for ${analysis.filename}
+
+Summary: ${analysis.analysis.summary || 'No summary available'}
+
+View full analysis: ${window.location.href}`;
+        await navigator.clipboard.writeText(textToCopy);
+        alert('Analysis link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+      alert('Failed to share. Link copied to clipboard instead.');
+      navigator.clipboard.writeText(window.location.href);
+    }
+  };
+
   // Tab definitions
   const tabs = [
     { id: "summary", label: "Summary", icon: <FileText className="h-4 w-4" /> },
@@ -195,6 +348,13 @@ const LegalDocumentAnalyzer = () => {
     { id: "recommendations", label: "Recommendations", icon: <Lightbulb className="h-4 w-4" /> },
     { id: "parties", label: "Parties", icon: <Users className="h-4 w-4" /> },
     { id: "more", label: "More", icon: <Gavel className="h-4 w-4" /> }
+  ];
+
+  // Target group options
+  const targetGroupOptions = [
+    { value: "individual", label: "Individual" },
+    { value: "enterprise", label: "Enterprise" },
+    { value: "institutional", label: "Institutional" }
   ];
 
   return (
@@ -215,6 +375,33 @@ const LegalDocumentAnalyzer = () => {
 
       {!analysis ? (
         <div className="space-y-6">
+          {/* Target Group Selection */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-800 dark:border-slate-700">
+            <div className="flex items-center gap-2 mb-4">
+              <Users className="h-5 w-5" />
+              <h2 className="text-xl font-semibold">👤 Select Target Group</h2>
+            </div>
+            <p className="text-gray-500 mb-4 dark:text-slate-400">
+              Choose the target group for analysis to get tailored insights
+            </p>
+            
+            <div className="flex flex-wrap gap-4">
+              {targetGroupOptions.map((option) => (
+                <button
+                  key={option.value}
+                  className={`px-6 py-3 rounded-lg border transition-colors ${
+                    targetGroup === option.value
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600"
+                  }`}
+                  onClick={() => setTargetGroup(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* File Upload Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-800 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-4">
@@ -345,7 +532,9 @@ const LegalDocumentAnalyzer = () => {
               <FileText className="h-5 w-5" />
               <h2 className="text-xl font-semibold">📝 Document Summary</h2>
             </div>
-            <p className="text-gray-500 dark:text-slate-400">{analysis.analysis.summary}</p>
+            <p className="text-gray-500 dark:text-slate-400">
+              {analysis.analysis.summary || analysis.analysis.about || "No summary available."}
+            </p>
           </div>
 
           {/* Tab Navigation - Simple button approach since we don't have Tabs component */}
@@ -372,35 +561,90 @@ const LegalDocumentAnalyzer = () => {
               {activeTab === "summary" && (
                 <div>
                   <h3 className="text-lg font-semibold mb-4">📝 Document Summary</h3>
-                  <p className="text-gray-500 dark:text-slate-400">{analysis.analysis.summary}</p>
+                  <p className="text-gray-500 dark:text-slate-400">{analysis.analysis.summary || analysis.analysis.about}</p>
                 </div>
               )}
 
               {activeTab === "key-terms" && (
                 <div>
                   <h3 className="text-lg font-semibold mb-4">🔑 Key Terms</h3>
-                  {renderKeyTerms(analysis.analysis.key_terms)}
+                  {analysis.analysis.key_terms ? (
+                    renderKeyTerms(analysis.analysis.key_terms)
+                  ) : analysis.analysis.clauses ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {analysis.analysis.clauses.map((clause: any, index: number) => (
+                        <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 dark:bg-slate-800 dark:border-slate-700">
+                          <h4 className="font-semibold text-blue-600 dark:text-blue-400">{clause.title}</h4>
+                          <p className="text-sm text-gray-500 mt-1 dark:text-slate-400">{clause.explanation}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">No key terms defined.</p>
+                  )}
                 </div>
               )}
 
               {activeTab === "main-clauses" && (
                 <div>
                   <h3 className="text-lg font-semibold mb-4">📋 Main Clauses</h3>
-                  {renderListItems(analysis.analysis.main_clauses, <ClipboardList className="h-4 w-4" />)}
+                  {analysis.analysis.clauses ? (
+                    renderClauses(analysis.analysis.clauses)
+                  ) : analysis.analysis.main_clauses ? (
+                    renderListItems(analysis.analysis.main_clauses, <ClipboardList className="h-4 w-4" />)
+                  ) : (
+                    <p className="text-muted-foreground">No main clauses defined.</p>
+                  )}
                 </div>
               )}
 
               {activeTab === "risks" && (
                 <div>
                   <h3 className="text-lg font-semibold mb-4">⚠️ Potential Risks</h3>
-                  {renderListItems(analysis.analysis.risks, <AlertTriangle className="h-4 w-4" />)}
+                  {analysis.analysis.risks ? (
+                    renderListItems(analysis.analysis.risks, <AlertTriangle className="h-4 w-4" />)
+                  ) : analysis.analysis.clauses ? (
+                    <div className="space-y-4">
+                      {analysis.analysis.clauses.filter((clause: any) => clause.risk && clause.risk !== "N/A").map((clause: any, index: number) => (
+                        <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 dark:bg-slate-800 dark:border-slate-700">
+                          <h4 className="font-semibold text-blue-600 dark:text-blue-400">{clause.title}</h4>
+                          <div className="mt-2 flex items-start gap-2">
+                            <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                            <span className="text-sm"><strong>Risk:</strong> {clause.risk}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">No risks identified.</p>
+                  )}
                 </div>
               )}
 
               {activeTab === "recommendations" && (
                 <div>
                   <h3 className="text-lg font-semibold mb-4">💡 Recommendations</h3>
-                  {renderListItems(analysis.analysis.recommendations, <Lightbulb className="h-4 w-4" />)}
+                  {analysis.analysis.recommendations ? (
+                    renderListItems(analysis.analysis.recommendations, <Lightbulb className="h-4 w-4" />)
+                  ) : analysis.analysis.clauses ? (
+                    <div className="space-y-4">
+                      {analysis.analysis.clauses.filter((clause: any) => clause.improvement && clause.improvement !== "N/A").map((clause: any, index: number) => (
+                        <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 dark:bg-slate-800 dark:border-slate-700">
+                          <h4 className="font-semibold text-blue-600 dark:text-blue-400">{clause.title}</h4>
+                          <div className="mt-2 flex items-start gap-2">
+                            <Lightbulb className="h-4 w-4 text-blue-500 mt-0.5" />
+                            <span className="text-sm"><strong>Improvement:</strong> {clause.improvement}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : analysis.analysis.finalAssessment ? (
+                    renderListItems(analysis.analysis.finalAssessment.recommendations, <Lightbulb className="h-4 w-4" />)
+                  ) : analysis.analysis.finalTips ? (
+                    renderListItems(analysis.analysis.finalTips, <Lightbulb className="h-4 w-4" />)
+                  ) : (
+                    <p className="text-muted-foreground">No recommendations provided.</p>
+                  )}
                 </div>
               )}
 
@@ -436,16 +680,53 @@ const LegalDocumentAnalyzer = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-2">🛑 Compliance Issues</h4>
-                      {renderListItems(analysis.analysis.compliance_issues, <ShieldCheck className="h-4 w-4" />)}
+                      {analysis.analysis.keyComplianceNotes ? (
+                        renderListItems(analysis.analysis.keyComplianceNotes, <ShieldCheck className="h-4 w-4" />)
+                      ) : (
+                        renderListItems(analysis.analysis.compliance_issues, <ShieldCheck className="h-4 w-4" />)
+                      )}
                     </div>
                     <div>
                       <h4 className="font-semibold mb-2">➡️ Next Steps</h4>
-                      {renderListItems(analysis.analysis.next_steps, <Rocket className="h-4 w-4" />)}
+                      {analysis.analysis.next_steps ? (
+                        renderListItems(analysis.analysis.next_steps, <Rocket className="h-4 w-4" />)
+                      ) : analysis.analysis.finalAssessment ? (
+                        renderListItems(analysis.analysis.finalAssessment.recommendations, <Rocket className="h-4 w-4" />)
+                      ) : analysis.analysis.finalTips ? (
+                        renderListItems(analysis.analysis.finalTips, <Rocket className="h-4 w-4" />)
+                      ) : (
+                        <p className="text-muted-foreground">No next steps provided.</p>
+                      )}
                     </div>
                   </div>
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-4 justify-center">
+            <button 
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+              onClick={downloadReport}
+            >
+              <Download className="h-5 w-5" />
+              Download Report
+            </button>
+            <button 
+              className="px-6 py-3 bg-green-600 text-white rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
+              onClick={printSummary}
+            >
+              <Printer className="h-5 w-5" />
+              Print Summary
+            </button>
+            <button 
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors"
+              onClick={shareAnalysis}
+            >
+              <Share2 className="h-5 w-5" />
+              Share Analysis
+            </button>
           </div>
         </div>
       )}
