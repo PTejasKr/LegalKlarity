@@ -1,9 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Upload, FileText, Loader2, Key, ClipboardList, AlertTriangle, Lightbulb, Users, Gavel, Calendar, FileQuestion, ShieldCheck, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
-import Button from "@/components/common/Button";
-import Card from "@/components/common/Card";
-import { useAppSelector } from "@/hooks/redux";
+// Remove imports that don't exist
 
 const LegalDocumentAnalyzer = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -12,7 +10,7 @@ const LegalDocumentAnalyzer = () => {
   const [dragActive, setDragActive] = useState(false);
   const [activeTab, setActiveTab] = useState("summary");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user } = useAppSelector((state) => state.auth);
+  // Remove useAppSelector since we don't have proper imports
 
   const handleFiles = (files: FileList) => {
     if (files && files[0]) {
@@ -69,7 +67,7 @@ const LegalDocumentAnalyzer = () => {
   };
 
   const handleAnalyze = async () => {
-    if (!file || !user) return;
+    if (!file) return;
 
     setIsAnalyzing(true);
     
@@ -218,161 +216,163 @@ const LegalDocumentAnalyzer = () => {
       {!analysis ? (
         <div className="space-y-6">
           {/* File Upload Card */}
-          <Card>
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <FileText className="h-5 w-5" />
-                <h2 className="text-xl font-semibold">📄 Upload Your Legal Document</h2>
-              </div>
-              <p className="text-muted-foreground mb-4">
-                Choose a document to analyze. Supported formats: PDF, DOCX
-              </p>
-              
-              <div
-                className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                  dragActive 
-                    ? "border-primary bg-primary/10" 
-                    : "border-gray-300 hover:border-primary"
-                }`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                onClick={onButtonClick}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  className="hidden"
-                  accept=".pdf,.docx"
-                  onChange={handleChange}
-                />
-                
-                {file ? (
-                  <div className="space-y-4">
-                    <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">{file.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
-                    <div className="flex gap-2 justify-center">
-                      <Button 
-                        variant="outline" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeFile();
-                        }}
-                      >
-                        Remove
-                      </Button>
-                      <Button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAnalyze();
-                        }}
-                        disabled={isAnalyzing}
-                      >
-                        {isAnalyzing ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Analyzing...
-                          </>
-                        ) : (
-                          "Analyze Document"
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">Drag and drop file here</p>
-                      <p className="text-sm text-muted-foreground">
-                        Limit 200MB per file • PDF, DOCX
-                      </p>
-                    </div>
-                    <Button variant="secondary">Choose File</Button>
-                  </div>
-                )}
-              </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-800 dark:border-slate-700">
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="h-5 w-5" />
+              <h2 className="text-xl font-semibold">📄 Upload Your Legal Document</h2>
             </div>
-          </Card>
+            <p className="text-gray-500 mb-4 dark:text-slate-400">
+              Choose a document to analyze. Supported formats: PDF, DOCX
+            </p>
+            
+            <div
+              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                dragActive 
+                  ? "border-blue-500 bg-blue-50 dark:bg-slate-700" 
+                  : "border-gray-300 hover:border-blue-500 dark:border-slate-600"
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              onClick={onButtonClick}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.docx"
+                onChange={handleChange}
+              />
+              
+              {file ? (
+                <div className="space-y-4">
+                  <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                  <div>
+                    <p className="font-medium">{file.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    <button 
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFile();
+                      }}
+                    >
+                      Remove
+                    </button>
+                    <button 
+                      className={`px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                        isAnalyzing ? "opacity-75 cursor-not-allowed" : ""
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAnalyze();
+                      }}
+                      disabled={isAnalyzing}
+                    >
+                      {isAnalyzing ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin inline" />
+                          Analyzing...
+                        </>
+                      ) : (
+                        "Analyze Document"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                  <div>
+                    <p className="font-medium">Drag and drop file here</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400">
+                      Limit 200MB per file • PDF, DOCX
+                    </p>
+                  </div>
+                  <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Choose File
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Instructions */}
-          <Card>
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">How It Works</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4">
-                  <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">
-                    <span className="text-primary font-bold">1</span>
-                  </div>
-                  <h3 className="font-semibold">Upload Document</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Choose any legal document in PDF or DOCX format
-                  </p>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-800 dark:border-slate-700">
+            <h2 className="text-xl font-semibold mb-4">How It Works</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center p-4">
+                <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2 dark:bg-slate-700">
+                  <span className="text-blue-600 font-bold">1</span>
                 </div>
-                <div className="text-center p-4">
-                  <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">
-                    <span className="text-primary font-bold">2</span>
-                  </div>
-                  <h3 className="font-semibold">AI Analysis</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Our AI breaks down complex legal jargon
-                  </p>
+                <h3 className="font-semibold">Upload Document</h3>
+                <p className="text-sm text-gray-500 mt-1 dark:text-slate-400">
+                  Choose any legal document in PDF or DOCX format
+                </p>
+              </div>
+              <div className="text-center p-4">
+                <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2 dark:bg-slate-700">
+                  <span className="text-blue-600 font-bold">2</span>
                 </div>
-                <div className="text-center p-4">
-                  <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">
-                    <span className="text-primary font-bold">3</span>
-                  </div>
-                  <h3 className="font-semibold">Get Insights</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Understand risks, obligations, and next steps
-                  </p>
+                <h3 className="font-semibold">AI Analysis</h3>
+                <p className="text-sm text-gray-500 mt-1 dark:text-slate-400">
+                  Our AI breaks down complex legal jargon
+                </p>
+              </div>
+              <div className="text-center p-4">
+                <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2 dark:bg-slate-700">
+                  <span className="text-blue-600 font-bold">3</span>
                 </div>
+                <h3 className="font-semibold">Get Insights</h3>
+                <p className="text-sm text-gray-500 mt-1 dark:text-slate-400">
+                  Understand risks, obligations, and next steps
+                </p>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       ) : (
         /* Analysis Results */
         <div className="space-y-6">
           {/* Document Summary */}
-          <Card>
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <FileText className="h-5 w-5" />
-                <h2 className="text-xl font-semibold">📝 Document Summary</h2>
-              </div>
-              <p className="text-muted-foreground">{analysis.analysis.summary}</p>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-800 dark:border-slate-700">
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="h-5 w-5" />
+              <h2 className="text-xl font-semibold">📝 Document Summary</h2>
             </div>
-          </Card>
+            <p className="text-gray-500 dark:text-slate-400">{analysis.analysis.summary}</p>
+          </div>
 
           {/* Tab Navigation - Simple button approach since we don't have Tabs component */}
           <div className="flex flex-wrap gap-2 mb-4">
             {tabs.map((tab) => (
-              <Button
+              <button
                 key={tab.id}
-                variant={activeTab === tab.id ? "primary" : "outline"}
+                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center gap-2 ${
+                  activeTab === tab.id
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600"
+                }`}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex items-center gap-2"
               >
                 {tab.icon}
                 <span className="hidden sm:inline">{tab.label}</span>
-              </Button>
+              </button>
             ))}
           </div>
 
           {/* Tab Content */}
-          <Card>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-800 dark:border-slate-700">
             <div className="p-6">
               {activeTab === "summary" && (
                 <div>
                   <h3 className="text-lg font-semibold mb-4">📝 Document Summary</h3>
-                  <p className="text-muted-foreground">{analysis.analysis.summary}</p>
+                  <p className="text-gray-500 dark:text-slate-400">{analysis.analysis.summary}</p>
                 </div>
               )}
 
@@ -446,7 +446,7 @@ const LegalDocumentAnalyzer = () => {
                 </div>
               )}
             </div>
-          </Card>
+          </div>
         </div>
       )}
     </motion.div>
