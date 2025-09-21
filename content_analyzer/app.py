@@ -81,6 +81,19 @@ SECTION_CUES = [
 # Helpers
 def safe_join_text(parts):
     return "\n".join([p for p in parts if p])
+
+def chunk_text(text, max_words=300, max_chunks=10):
+    """
+    Split text into chunks of specified word count
+    
+    Args:
+        text (str): Text to chunk
+        max_words (int): Maximum words per chunk
+        max_chunks (int): Maximum number of chunks to return
+        
+    Returns:
+        list: List of text chunks
+    """
     words = text.split()
     chunks = [" ".join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
     return chunks[:max_chunks]
