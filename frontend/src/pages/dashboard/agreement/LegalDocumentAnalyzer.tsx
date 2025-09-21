@@ -176,10 +176,10 @@ const LegalDocumentAnalyzer = () => {
           // Split the term into key and definition
           const [key, definition] = term.includes(": ") ? term.split(": ") : [term, ""];
           return (
-            <Card key={index} className="p-4">
-              <h4 className="font-semibold text-primary">{key}</h4>
-              <p className="text-sm text-muted-foreground mt-1">{definition}</p>
-            </Card>
+            <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 dark:bg-slate-800 dark:border-slate-700">
+              <h4 className="font-semibold text-blue-600 dark:text-blue-400">{key}</h4>
+              <p className="text-sm text-gray-500 mt-1 dark:text-slate-400">{definition}</p>
+            </div>
           );
         })}
       </div>
