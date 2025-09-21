@@ -71,10 +71,10 @@ export default function AgreementProcess() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="text-center">
                         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 dark:text-white">
-                            Agreement Process Guide
+                            Document Process Guide
                         </h1>
                         <p className="text-lg text-gray-600 max-w-3xl mx-auto dark:text-slate-300">
-                            Get step-by-step guidance for drafting, reviewing, and executing legal agreements
+                            Get step-by-step guidance for drafting, reviewing, and executing legal documents
                         </p>
                     </div>
                 </div>
@@ -166,7 +166,7 @@ export default function AgreementProcess() {
                                 </div>
                                 <div className="ml-4">
                                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                        {query ? `${query} Process` : 'Agreement Process'}
+                                        {query ? `${query} Process` : 'Document Process'}
                                     </h2>
                                     <p className="mt-1 text-gray-600 dark:text-slate-400">
                                         Complete guide with steps, requirements, and resources

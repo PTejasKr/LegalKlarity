@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Shield, MessageCircle, CheckCircle, Globe, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../hooks/redux';
 
 const FeaturesPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const [isNavigating, setIsNavigating] = useState(false);
+  
+  const handleProtectedNavigation = (path: string) => {
+    if (isNavigating) return; // Prevent multiple clicks
+    
+    setIsNavigating(true);
+    if (isAuthenticated) {
+      navigate(path);
+    } else {
+      navigate('/login');
+    }
+    
+    // Reset navigation state after a short delay
+    setTimeout(() => {
+      setIsNavigating(false);
+    }, 1000);
+  };
+  
   return (
-    <div className="min-h-screen bg-white dark:bg-black py-28 px-4 md:px-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-28 px-4 md:px-20">
       {/* Header - Updating to match About page style */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -87,8 +109,10 @@ const FeaturesPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.7 }}
               className="mt-8 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+              onClick={() => handleProtectedNavigation("/dashboard/role-selection")}
+              disabled={isNavigating}
             >
-              Try Document Analysis
+              {isNavigating ? "Redirecting..." : "Try Document Analysis"}
             </motion.button>
           </div>
           
@@ -247,8 +271,10 @@ const FeaturesPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1.7 }}
               className="mt-8 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+              onClick={() => handleProtectedNavigation("/dashboard/role-selection")}
+              disabled={isNavigating}
             >
-              Try Risk Assessment
+              {isNavigating ? "Redirecting..." : "Try Risk Assessment"}
             </motion.button>
           </div>
           
@@ -332,8 +358,10 @@ const FeaturesPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 2.5 }}
               className="mt-8 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+              onClick={() => handleProtectedNavigation("/dashboard/ai-chatbot")}
+              disabled={isNavigating}
             >
-              Try AI Assistant
+              {isNavigating ? "Redirecting..." : "Try AI Assistant"}
             </motion.button>
           </div>
           
@@ -518,11 +546,29 @@ const FeaturesPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 4.0 }}
         >
-          <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
-            Start Free Trial
+          <button 
+            className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition" 
+            onClick={() => {
+              if (isNavigating) return;
+              setIsNavigating(true);
+              navigate("/register");
+              setTimeout(() => setIsNavigating(false), 1000);
+            }}
+            disabled={isNavigating}
+          >
+            {isNavigating ? "Redirecting..." : "Start Free Trial"}
           </button>
-          <button className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
-            Watch Demo
+          <button 
+            className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700" 
+            onClick={() => {
+              if (isNavigating) return;
+              setIsNavigating(true);
+              navigate("/demo");
+              setTimeout(() => setIsNavigating(false), 1000);
+            }}
+            disabled={isNavigating}
+          >
+            {isNavigating ? "Redirecting..." : "Watch Demo"}
           </button>
         </motion.div>
       </motion.div>

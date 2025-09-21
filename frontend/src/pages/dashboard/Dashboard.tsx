@@ -8,7 +8,7 @@ export default function Dashboard() {
   const features = [
     {
       name: "Upload Document",
-      description: "Quickly understand key points of contracts and agreements with AI-powered analysis.",
+      description: "Upload and analyze legal documents with our AI-powered platform to understand key points, risks, and clauses.",
       icon: FileText,
       path: "/dashboard/role-selection",
       color: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
@@ -16,9 +16,9 @@ export default function Dashboard() {
     },
     {
       name: "Document Analysis",
-      description: "Step-by-step guidance for drafting and executing agreements with legal best practices.",
+      description: "AI-powered analysis of legal documents with risk scoring and clause breakdown.",
       icon: ListTodo,
-      path: "/dashboard/process/summary",
+      path: "/dashboard/agreement/summary",
       color: "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
       hoverColor: "hover:bg-green-100 dark:hover:bg-green-900/50"
     },
@@ -33,7 +33,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
