@@ -1,0 +1,19 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "python app.py",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "GOOGLE_CLOUD_PROJECT": "your-google_cloud_project_id",
+        "GOOGLE_CLOUD_LOCATION": "us-central1"
+      }
+    }
+  }
+}

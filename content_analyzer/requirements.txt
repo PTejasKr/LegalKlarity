@@ -10,6 +10,7 @@ reportlab==4.0.4
 # Web server for production
 gunicorn==20.1.0
 
-# Minimal Google Cloud dependencies
+# Google Cloud dependencies for Vertex AI
 google-auth==2.22.0
 google-api-python-client==2.95.0
+google-cloud-aiplatform==1.26.1

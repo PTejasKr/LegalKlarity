@@ -11,9 +11,29 @@ from reportlab.lib.styles import getSampleStyleSheet
 import json
 import os
 from datetime import datetime
+import textwrap
 
 # Flask app
 app = Flask(__name__)
+
+# Google Cloud configuration
+GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-google-cloud-project-id")
+GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+
+# Initialize Vertex AI
+try:
+    import google.cloud.aiplatform as aiplatform
+    aiplatform.init(
+        project=GOOGLE_CLOUD_PROJECT,
+        location=GOOGLE_CLOUD_LOCATION
+    )
+    VERTEX_AI_AVAILABLE = True
+except ImportError:
+    VERTEX_AI_AVAILABLE = False
+    print("Vertex AI not available - using fallback analysis")
+except Exception as e:
+    VERTEX_AI_AVAILABLE = False
+    print(f"Vertex AI initialization failed: {e}")
 
 # Section cues to check for agreements
 POSITIVE_LABELS = [
@@ -154,6 +174,181 @@ def create_fallback_analysis(text, document_type):
         "next_steps": ["Review document with legal counsel"]
     }
 
+# Enhanced document analysis function
+def analyze_legal_document(text, document_type=None):
+    """
+    Comprehensive legal document analysis using Gemini AI
+    
+    Args:
+        text (str): Extracted text from legal document
+        document_type (str, optional): Type of document (auto-detected if None)
+    
+    Returns:
+        dict: Structured analysis with 12 categories
+    """
+    
+    # Auto-detect document type if not provided
+    if not document_type:
+        document_type = detect_document_type(text)
+    
+    # If Vertex AI is not available, use fallback analysis
+    if not VERTEX_AI_AVAILABLE:
+        return create_fallback_analysis(text, document_type)
+    
+    # Enhanced prompt engineering for comprehensive analysis
+    prompt = f"""
+    Analyze the following {document_type or 'legal document'} and provide a comprehensive analysis.
+    Return ONLY valid JSON that strictly matches this schema:
+    
+    {{
+        "summary": "Brief 2-3 sentence overview of the entire document",
+        "key_terms": [
+            {{
+                "term": "Defined term",
+                "definition": "Clear definition from the document"
+            }}
+        ],
+        "main_clauses": [
+            {{
+                "name": "Clause name/title",
+                "description": "Brief description of what this clause covers"
+            }}
+        ],
+        "critical_dates": [
+            {{
+                "date": "YYYY-MM-DD or date range",
+                "event": "What happens on this date"
+            }}
+        ],
+        "parties": [
+            {{
+                "name": "Party name",
+                "role": "Their role in the agreement"
+            }}
+        ],
+        "jurisdiction": "Governing law and jurisdiction information",
+        "obligations": [
+            {{
+                "party": "Which party",
+                "responsibility": "What they must do"
+            }}
+        ],
+        "risks": [
+            {{
+                "risk": "Identified risk",
+                "severity": "high/medium/low",
+                "description": "Explanation of the risk"
+            }}
+        ],
+        "recommendations": [
+            "Actionable recommendation to address identified issues"
+        ],
+        "missing_clauses": [
+            {{
+                "clause": "Missing clause name",
+                "importance": "Why it's important"
+            }}
+        ],
+        "compliance_issues": [
+            {{
+                "issue": "Compliance concern",
+                "regulation": "Relevant law/regulation (if identifiable)"
+            }}
+        ],
+        "next_steps": [
+            "Action item that should be taken next"
+        ]
+    }}
+    
+    Document Text:
+    {text[:50000]}  # Limit to prevent token overflow
+    """
+    
+    try:
+        # Initialize Gemini model
+        from vertexai.generative_models import GenerativeModel
+        model = GenerativeModel("gemini-1.5-flash-001")
+        
+        # Generate response
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.4,
+                "top_p": 0.8,
+                "top_k": 40,
+                "max_output_tokens": 8192,
+            }
+        )
+        
+        # Parse and validate JSON response
+        analysis = json.loads(response.text)
+        return analysis
+        
+    except json.JSONDecodeError as e:
+        # Fallback to basic analysis if JSON parsing fails
+        return create_fallback_analysis(text, document_type)
+    except Exception as e:
+        # Return error structure
+        return {
+            "error": f"Analysis failed: {str(e)}",
+            "summary": "Document analysis could not be completed due to technical issues.",
+            "key_terms": [],
+            "main_clauses": [],
+            "critical_dates": [],
+            "parties": [],
+            "jurisdiction": "Not available",
+            "obligations": [],
+            "risks": [],
+            "recommendations": [],
+            "missing_clauses": [],
+            "compliance_issues": [],
+            "next_steps": []
+        }
+
+# Enhanced Flask route for document analysis
+@app.route("/enhanced_analysis", methods=["POST"])
+def enhanced_document_analysis():
+    """
+    Enhanced document analysis endpoint
+    """
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+    
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"error": "No file selected"}), 400
+
+    # Extract text (using existing functions)
+    filename = file.filename.lower()
+    text = ""
+    
+    if filename.endswith(".pdf"):
+        text = extract_pdf(file.stream)
+    elif filename.endswith(".docx"):
+        text = extract_docx(file.stream)
+    elif filename.endswith((".png", ".jpg", ".jpeg")):
+        text = extract_image(file.stream)
+    else:
+        return jsonify({"error": "Unsupported file type"}), 400
+    
+    # Check if it's a valid agreement (using existing function)
+    is_ok, details = classify_agreement(text)
+    if not is_ok:
+        return jsonify({
+            "error": "Rejected: Not a valid agreement.",
+            "details": details
+        }), 400
+    
+    # Perform enhanced analysis
+    analysis = analyze_legal_document(text)
+    
+    return jsonify({
+        "filename": file.filename,
+        "extracted_text": text,
+        "analysis": analysis,
+        "timestamp": datetime.now().isoformat()
+    })
+
 # File extraction functions
 def extract_pdf(file_stream):
     try:
@@ -197,45 +392,6 @@ def extract_image(file_stream):
 @app.route("/active", methods=["GET"])
 def active():
     return "active"
-
-@app.route("/uploads", methods=["POST"])
-def api_upload():
-    if "file" not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
-    file = request.files["file"]
-    if file.filename == "":
-        return jsonify({"error": "No file selected"}), 400
-
-    filename = file.filename.lower()
-    text = ""
-
-    if filename.endswith(".pdf"):
-        text = extract_pdf(file.stream)
-    elif filename.endswith(".docx"):
-        text = extract_docx(file.stream)
-    elif filename.endswith((".png", ".jpg", ".jpeg")):
-        text = extract_image(file.stream)
-    else:
-        return jsonify({"error": "Unsupported file type"}), 400
-
-    is_ok, details = classify_agreement(text)
-
-    if not is_ok:
-        return jsonify({
-            "error": "Rejected: Not a valid agreement.",
-            "details": details
-        }), 400
-
-    # Perform basic analysis
-    document_type = detect_document_type(text)
-    analysis = create_fallback_analysis(text, document_type)
-    
-    return jsonify({
-        "filename": file.filename,
-        "extracted_text": text,
-        "analysis": analysis,
-        "timestamp": datetime.now().isoformat()
-    })
 
 @app.route("/export/pdf", methods=["POST"])
 def export_pdf():

@@ -46,7 +46,19 @@ const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) 
     const formData = new FormData();
     formData.append('file', fs.createReadStream(file.path), file.originalname);
 
-    const modelResponse = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/uploads`, formData, {
+    // Check if CONTENT_ANALYZER_URL is configured
+    if (!process.env.CONTENT_ANALYZER_URL) {
+        await createAuditLog({
+            uid: uid || 'unknown',
+            action: 'AGREEMENT_SUMMARY',
+            status: 'failure',
+            entityType: 'Agreement',
+            details: 'CONTENT_ANALYZER_URL environment variable not configured',
+        });
+        throw new ApiError(500, 'Content analyzer service not configured');
+    }
+
+    const modelResponse = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/enhanced_analysis`, formData, {
         headers: {
             ...formData.getHeaders(),
         },
@@ -398,16 +410,30 @@ const enhancedAgreementAnalysis = asyncHandler(async (req: MulterRequest, res: R
         throw new ApiError(400, 'File is required');
     }
 
+    // Check if CONTENT_ANALYZER_URL is configured
+    if (!process.env.CONTENT_ANALYZER_URL) {
+        await createAuditLog({
+            uid: uid || 'unknown',
+            action: 'ENHANCED_AGREEMENT_ANALYSIS',
+            status: 'failure',
+            entityType: 'Agreement',
+            details: 'CONTENT_ANALYZER_URL environment variable not configured',
+        });
+        throw new ApiError(500, 'Content analyzer service not configured');
+    }
+
     // file.path is the path to the file saved by multer
     const formData = new FormData();
     formData.append('file', fs.createReadStream(file.path), file.originalname);
 
     try {
         // Call the enhanced analysis endpoint in the content analyzer
+        console.log("Calling content analyzer at:", process.env.CONTENT_ANALYZER_URL);
         const modelResponse = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/enhanced_analysis`, formData, {
             headers: {
                 ...formData.getHeaders(),
             },
+            timeout: 30000, // 30 second timeout
         });
 
         let analysisResult = modelResponse.data.analysis;
@@ -460,7 +486,7 @@ const enhancedAgreementAnalysis = asyncHandler(async (req: MulterRequest, res: R
         );
 
     } catch (error: any) {
-        console.error("Enhanced analysis error:", error);
+        console.error("Enhanced analysis error:", error.response?.data || error.message || error);
         await createAuditLog({
             uid,
             action: 'ENHANCED_AGREEMENT_ANALYSIS',
@@ -468,6 +494,18 @@ const enhancedAgreementAnalysis = asyncHandler(async (req: MulterRequest, res: R
             entityType: 'Agreement',
             details: error.message || 'Unknown error in enhanced analysis',
         });
+        
+        // Provide more specific error messages
+        if (error.code === 'ECONNABORTED') {
+            throw new ApiError(500, 'Content analyzer service timed out. Please try again later.');
+        } else if (error.response?.status === 400) {
+            throw new ApiError(400, `Content analyzer rejected the file: ${error.response.data?.error || 'Invalid file'}`);
+        } else if (error.response?.status === 500) {
+            throw new ApiError(500, `Content analyzer service error: ${error.response.data?.error || 'Internal server error'}`);
+        } else if (error.response?.status) {
+            throw new ApiError(error.response.status, `Content analyzer service error (${error.response.status}): ${error.response.data?.error || 'Unknown error'}`);
+        }
+        
         throw new ApiError(500, 'Failed to perform enhanced agreement analysis: ' + (error.message || 'Unknown error'));
     }
 });
@@ -611,12 +649,17 @@ const uploadFile = asyncHandler(async (req: MulterRequest, res: Response) => {
         throw new ApiError(400, 'File is required');
     }
 
+    // Check if CONTENT_ANALYZER_URL is configured
+    if (!process.env.CONTENT_ANALYZER_URL) {
+        throw new ApiError(500, 'Content analyzer service not configured');
+    }
+
     // file.path is the path to the file saved by multer
     const formData = new FormData();
     formData.append('file', fs.createReadStream(file.path), file.originalname);
 
     try {
-        const response = await axios.post('http://127.0.0.1:5000/uploads', formData, {
+        const response = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/enhanced_analysis`, formData, {
             headers: {
                 ...formData.getHeaders(),
             },
