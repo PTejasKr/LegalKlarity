@@ -13,6 +13,18 @@ import os
 from datetime import datetime
 import textwrap
 
+# Try to import Vertex AI components
+try:
+    import google.cloud.aiplatform as aiplatform
+    from vertexai.generative_models import GenerativeModel, Part
+    VERTEX_AI_AVAILABLE = True
+except ImportError:
+    VERTEX_AI_AVAILABLE = False
+    print("Vertex AI not available - using fallback analysis")
+except Exception as e:
+    VERTEX_AI_AVAILABLE = False
+    print(f"Vertex AI initialization failed: {e}")
+
 # Flask app
 app = Flask(__name__)
 
@@ -21,19 +33,18 @@ GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-google-cloud
 GOOGLE_CLOUD_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
 
 # Initialize Vertex AI
-try:
-    import google.cloud.aiplatform as aiplatform
-    aiplatform.init(
-        project=GOOGLE_CLOUD_PROJECT,
-        location=GOOGLE_CLOUD_LOCATION
-    )
-    VERTEX_AI_AVAILABLE = True
-except ImportError:
-    VERTEX_AI_AVAILABLE = False
-    print("Vertex AI not available - using fallback analysis")
-except Exception as e:
-    VERTEX_AI_AVAILABLE = False
-    print(f"Vertex AI initialization failed: {e}")
+if VERTEX_AI_AVAILABLE:
+    try:
+        aiplatform.init(
+            project=GOOGLE_CLOUD_PROJECT,
+            location=GOOGLE_CLOUD_LOCATION
+        )
+        print("Vertex AI initialized successfully")
+    except Exception as e:
+        VERTEX_AI_AVAILABLE = False
+        print(f"Vertex AI initialization failed: {e}")
+else:
+    print("Vertex AI not available")
 
 # Section cues to check for agreements
 POSITIVE_LABELS = [
@@ -193,6 +204,7 @@ def analyze_legal_document(text, document_type=None):
     
     # If Vertex AI is not available, use fallback analysis
     if not VERTEX_AI_AVAILABLE:
+        print("Using fallback analysis - Vertex AI not available")
         return create_fallback_analysis(text, document_type)
     
     # Enhanced prompt engineering for comprehensive analysis
@@ -266,7 +278,6 @@ def analyze_legal_document(text, document_type=None):
     
     try:
         # Initialize Gemini model
-        from vertexai.generative_models import GenerativeModel
         model = GenerativeModel("gemini-1.5-flash-001")
         
         # Generate response
@@ -285,9 +296,11 @@ def analyze_legal_document(text, document_type=None):
         return analysis
         
     except json.JSONDecodeError as e:
+        print(f"JSON parsing failed: {e}")
         # Fallback to basic analysis if JSON parsing fails
         return create_fallback_analysis(text, document_type)
     except Exception as e:
+        print(f"Analysis failed: {e}")
         # Return error structure
         return {
             "error": f"Analysis failed: {str(e)}",
@@ -311,43 +324,65 @@ def enhanced_document_analysis():
     """
     Enhanced document analysis endpoint
     """
+    print("Received request to enhanced_analysis endpoint")
+    
     if "file" not in request.files:
+        print("No file uploaded")
         return jsonify({"error": "No file uploaded"}), 400
     
     file = request.files["file"]
+    print(f"Received file: {file.filename}")
+    
     if file.filename == "":
+        print("No file selected")
         return jsonify({"error": "No file selected"}), 400
 
     # Extract text (using existing functions)
     filename = file.filename.lower()
     text = ""
     
-    if filename.endswith(".pdf"):
-        text = extract_pdf(file.stream)
-    elif filename.endswith(".docx"):
-        text = extract_docx(file.stream)
-    elif filename.endswith((".png", ".jpg", ".jpeg")):
-        text = extract_image(file.stream)
-    else:
-        return jsonify({"error": "Unsupported file type"}), 400
-    
-    # Check if it's a valid agreement (using existing function)
-    is_ok, details = classify_agreement(text)
-    if not is_ok:
+    try:
+        if filename.endswith(".pdf"):
+            print("Processing PDF file")
+            text = extract_pdf(file.stream)
+        elif filename.endswith(".docx"):
+            print("Processing DOCX file")
+            text = extract_docx(file.stream)
+        elif filename.endswith((".png", ".jpg", ".jpeg")):
+            print("Processing image file")
+            text = extract_image(file.stream)
+        else:
+            print(f"Unsupported file type: {filename}")
+            return jsonify({"error": "Unsupported file type"}), 400
+        
+        print(f"Extracted text length: {len(text)}")
+        
+        # Check if it's a valid agreement (using existing function)
+        is_ok, details = classify_agreement(text)
+        print(f"Classification result: {is_ok}, Details: {details}")
+        
+        if not is_ok:
+            return jsonify({
+                "error": "Rejected: Not a valid agreement.",
+                "details": details
+            }), 400
+        
+        # Perform enhanced analysis
+        print("Performing enhanced analysis")
+        analysis = analyze_legal_document(text)
+        print(f"Analysis completed: {analysis.get('summary', 'No summary')[:100]}...")
+        
         return jsonify({
-            "error": "Rejected: Not a valid agreement.",
-            "details": details
-        }), 400
-    
-    # Perform enhanced analysis
-    analysis = analyze_legal_document(text)
-    
-    return jsonify({
-        "filename": file.filename,
-        "extracted_text": text,
-        "analysis": analysis,
-        "timestamp": datetime.now().isoformat()
-    })
+            "filename": file.filename,
+            "extracted_text": text,
+            "analysis": analysis,
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        print(f"Error in enhanced_document_analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 # File extraction functions
 def extract_pdf(file_stream):
