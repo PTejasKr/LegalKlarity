@@ -1,9 +1,9 @@
 // services/geminiService.js
-import { GoogleGenerativeAI } from "@google/generative-ai";
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-export const analyzeDocumentWithGemini = async (documentText, documentType, userRole) => {
+const analyzeDocumentWithGemini = async (documentText, documentType, userRole) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     
@@ -31,7 +31,7 @@ export const analyzeDocumentWithGemini = async (documentText, documentType, user
   }
 };
 
-export const generateContractWithGemini = async (contractType, partyA, partyB, terms) => {
+const generateContractWithGemini = async (contractType, partyA, partyB, terms) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     
@@ -53,7 +53,7 @@ export const generateContractWithGemini = async (contractType, partyA, partyB, t
   }
 };
 
-export const getLegalAdviceFromGemini = async (question, context) => {
+const getLegalAdviceFromGemini = async (question, context) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     
@@ -76,4 +76,10 @@ export const getLegalAdviceFromGemini = async (question, context) => {
     console.error('Error getting legal advice from Gemini:', error);
     throw error;
   }
+};
+
+module.exports = {
+  analyzeDocumentWithGemini,
+  generateContractWithGemini,
+  getLegalAdviceFromGemini
 };

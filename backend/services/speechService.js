@@ -1,14 +1,14 @@
 // services/speechService.js
-import speech from '@google-cloud/speech';
-import textToSpeech from '@google-cloud/text-to-speech';
-import fs from 'fs';
-import util from 'util';
+const speech = require('@google-cloud/speech');
+const textToSpeech = require('@google-cloud/text-to-speech');
+const fs = require('fs');
+const util = require('util');
 
 // Initialize Google Cloud clients
 const speechClient = new speech.SpeechClient();
 const ttsClient = new textToSpeech.TextToSpeechClient();
 
-export const transcribeAudio = async (audioBuffer, languageCode = 'en-US') => {
+const transcribeAudio = async (audioBuffer, languageCode = 'en-US') => {
   try {
     const audio = {
       content: audioBuffer.toString('base64'),
@@ -37,7 +37,7 @@ export const transcribeAudio = async (audioBuffer, languageCode = 'en-US') => {
   }
 };
 
-export const synthesizeSpeech = async (text, languageCode = 'en-US') => {
+const synthesizeSpeech = async (text, languageCode = 'en-US') => {
   try {
     const request = {
       input: { text: text },
@@ -55,4 +55,9 @@ export const synthesizeSpeech = async (text, languageCode = 'en-US') => {
     console.error('Error synthesizing speech:', error);
     throw error;
   }
+};
+
+module.exports = {
+  transcribeAudio,
+  synthesizeSpeech
 };

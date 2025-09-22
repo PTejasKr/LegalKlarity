@@ -10,23 +10,11 @@ import fs from 'fs';
 import { mockSummarizeAgreement, mockProcessWithGemini } from "../services/mockGeminiApi.services";
 import multer from "multer";
 
-// Define a custom type for multer file
-interface UploadedFile {
-    fieldname: string;
-    originalname: string;
-    encoding: string;
-    mimetype: string;
-    size: number;
-    destination: string;
-    filename: string;
-    path: string;
-}
-
 // Extend the Request type to include files property from multer
 interface MulterRequest extends Request {
     files?: {
-        [fieldname: string]: UploadedFile[];
-    } | UploadedFile[];
+        [fieldname: string]: any[];
+    } | any[];
 }
 
 const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) => {

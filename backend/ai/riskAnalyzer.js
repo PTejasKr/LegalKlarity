@@ -1,7 +1,7 @@
 // ai/riskAnalyzer.js
-import { calculateRiskScore, generateRiskReport } from '../services/riskAnalysisService.js';
+const { calculateRiskScore, generateRiskReport } = require('../services/riskAnalysisService.js');
 
-export const analyzeDocumentRisk = async (documentAnalysis) => {
+const analyzeDocumentRisk = async (documentAnalysis) => {
   try {
     const riskScore = calculateRiskScore(documentAnalysis);
     const riskReport = generateRiskReport(riskScore);
@@ -10,4 +10,8 @@ export const analyzeDocumentRisk = async (documentAnalysis) => {
     console.error('Error analyzing document risk:', error);
     throw error;
   }
+};
+
+module.exports = {
+  analyzeDocumentRisk
 };

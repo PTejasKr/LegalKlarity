@@ -4,35 +4,31 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc --project tsconfig.build.json",
+    "build": "tsc --project tsconfig.build.json && npm run copy-service-account",
+    "copy-service-account": "node -e \"const fs = require('fs'); const path = require('path'); const src = 'src/db/serviceAccountKey.json'; const dest = 'dist/db/serviceAccountKey.json'; const destDir = path.dirname(dest); if (!fs.existsSync(src)) { console.log('Service account key file not found, skipping copy'); } else { if (!fs.existsSync(destDir)) { fs.mkdirSync(destDir, { recursive: true }); } fs.copyFileSync(src, dest); console.log('Service account key file copied to dist directory'); }\" || echo \"Failed to copy service account key file\"",
+    "prestart": "npm run build",
     "start": "node dist/index.js",
-    "deploy": "firebase deploy --only functions"
+    "start:server": "node dist/index.js",
+    "test:firebase": "ts-node test-firebase.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "firebase-functions-test": "^3.0.0",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/multer": "^2.0.0",
     "@types/node": "^22.15.21",
     "@types/ws": "^8.18.1",
-    "i": "^0.3.7",
-    "npm": "^11.5.2",
-    "prisma": "^6.13.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "firebase-admin": "^13.4.0",
-    "firebase-functions": "^6.4.0",
-    "@google-cloud/speech": "^7.2.0",
-    "@google-cloud/text-to-speech": "^6.3.0",
+    "@google-cloud/speech": "^6.7.0",
+    "@google-cloud/text-to-speech": "^5.5.0",
     "@google-cloud/translate": "^9.2.0",
     "@google/generative-ai": "^0.24.1",
     "@neondatabase/serverless": "^1.0.0",
-    "@socket.io/redis-adapter": "^8.3.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.2",
@@ -41,13 +37,12 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.4.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
-    "nodemon": "^3.1.10",
-    "redis": "^5.8.2",
     "ts-node": "^10.9.2",
-    "tsx": "^4.20.3",
-    "ws": "^8.18.2"
+    "tsx": "^4.20.3"
   },
   "engines": {
     "node": "18"

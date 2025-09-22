@@ -50,7 +50,39 @@ const Register: React.FC = () => {
     if (!validateForm()) return;
     setLoading(true);
     setErrors({});
+    
+    // Check if we're in mock mode
+    if (import.meta.env.VITE_USE_MOCK_API === 'true') {
+      try {
+        // Mock registration
+        const result = await dispatch(registerAsync({
+          email: formData.email,
+          displayName: formData.name,
+          region: formData.region,
+          language: formData.language,
+        })).unwrap();
+        
+        if (result.user) {
+          toast.success("Account created successfully (mock)!");
+          setLoading(false);
+          navigate("/login");
+        } else {
+          toast.error("Failed to create account.");
+        }
+        return;
+      } catch (apiError: any) {
+        toast.error(apiError.message || "Failed to create account.");
+        setLoading(false);
+        return;
+      }
+    }
+    
+    // Firebase registration
     try {
+      if (!auth) {
+        throw new Error("Firebase auth is not initialized");
+      }
+      
       await createUserWithEmailAndPassword(auth, formData.email, formData.password);
 
       // Call backend API to create Firestore user profile via authService
