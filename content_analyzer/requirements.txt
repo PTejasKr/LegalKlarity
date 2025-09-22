@@ -6,7 +6,10 @@ Pillow==10.0.1
 PyMuPDF==1.23.5
 pytesseract==0.3.10
 transformers==4.30.2
-torch==2.0.1
+# Use CPU-only version of PyTorch to reduce size
+torch==2.0.1+cpu
+torchvision==0.15.2+cpu
+torchaudio==2.0.2+cpu
 reportlab==4.0.4
 
 # Google Cloud dependencies for Vertex AI integration
