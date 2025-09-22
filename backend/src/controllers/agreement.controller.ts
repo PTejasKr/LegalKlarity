@@ -42,10 +42,6 @@ const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) 
         throw new ApiError(400, 'File is required');
     }
 
-    // file.path is the path to the file saved by multer
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(file.path), file.originalname);
-
     // Check if CONTENT_ANALYZER_URL is configured
     if (!process.env.CONTENT_ANALYZER_URL) {
         await createAuditLog({
@@ -58,13 +54,21 @@ const agreementSummary = asyncHandler(async (req: MulterRequest, res: Response) 
         throw new ApiError(500, 'Content analyzer service not configured');
     }
 
-    const modelResponse = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/enhanced_analysis`, formData, {
-        headers: {
-            ...formData.getHeaders(),
-        },
-    });
+    let fileStream: fs.ReadStream | null = null;
+    
+    try {
+        // file.path is the path to the file saved by multer
+        fileStream = fs.createReadStream(file.path);
+        const formData = new FormData();
+        formData.append('file', fileStream, file.originalname);
 
-    let agreementText = modelResponse.data.extracted_text.replace(/\n/g, '\n');
+        const modelResponse = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/enhanced_analysis`, formData, {
+            headers: {
+                ...formData.getHeaders(),
+            },
+        });
+
+        let agreementText = modelResponse.data.extracted_text.replace(/\n/g, '\n');
 
     // console.log("Agreement text extracted ", agreementText);
 
@@ -422,11 +426,14 @@ const enhancedAgreementAnalysis = asyncHandler(async (req: MulterRequest, res: R
         throw new ApiError(500, 'Content analyzer service not configured');
     }
 
-    // file.path is the path to the file saved by multer
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(file.path), file.originalname);
-
+    let fileStream: fs.ReadStream | null = null;
+    
     try {
+        // file.path is the path to the file saved by multer
+        fileStream = fs.createReadStream(file.path);
+        const formData = new FormData();
+        formData.append('file', fileStream, file.originalname);
+
         // Call the enhanced analysis endpoint in the content analyzer
         console.log("Calling content analyzer at:", process.env.CONTENT_ANALYZER_URL);
         const modelResponse = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/enhanced_analysis`, formData, {
@@ -484,7 +491,6 @@ const enhancedAgreementAnalysis = asyncHandler(async (req: MulterRequest, res: R
                 filename: file.originalname
             }, 'Enhanced agreement analysis completed successfully')
         );
-
     } catch (error: any) {
         console.error("Enhanced analysis error:", error.response?.data || error.message || error);
         await createAuditLog({
@@ -507,6 +513,11 @@ const enhancedAgreementAnalysis = asyncHandler(async (req: MulterRequest, res: R
         }
         
         throw new ApiError(500, 'Failed to perform enhanced agreement analysis: ' + (error.message || 'Unknown error'));
+    } finally {
+        // Close the file stream if it was opened
+        if (fileStream) {
+            fileStream.destroy();
+        }
     }
 });
 
@@ -654,11 +665,14 @@ const uploadFile = asyncHandler(async (req: MulterRequest, res: Response) => {
         throw new ApiError(500, 'Content analyzer service not configured');
     }
 
-    // file.path is the path to the file saved by multer
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(file.path), file.originalname);
-
+    let fileStream: fs.ReadStream | null = null;
+    
     try {
+        // file.path is the path to the file saved by multer
+        fileStream = fs.createReadStream(file.path);
+        const formData = new FormData();
+        formData.append('file', fileStream, file.originalname);
+
         const response = await axios.post(`${process.env.CONTENT_ANALYZER_URL}/enhanced_analysis`, formData, {
             headers: {
                 ...formData.getHeaders(),
@@ -667,6 +681,11 @@ const uploadFile = asyncHandler(async (req: MulterRequest, res: Response) => {
         return res.status(200).json(new ApiResponse(200, response.data, 'File uploaded successfully'));
     } catch (error) {
         throw new ApiError(500, 'File upload failed');
+    } finally {
+        // Close the file stream if it was opened
+        if (fileStream) {
+            fileStream.destroy();
+        }
     }
 });
 
