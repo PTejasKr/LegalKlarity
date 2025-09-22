@@ -35,7 +35,7 @@ src/db/serviceAccountKey.json
 firebase-debug.log*
 
 # Deployment documentation
-DEPLOYMENT.md
+DEPLOYMENT_SUMMARY.md
 
 # Temporary files
 *.tmp
@@ -44,3 +44,6 @@ DEPLOYMENT.md
 # Backup files
 *.bak
 *.backup
+
+# Railway configuration (this is at repo root)
+../railway.json

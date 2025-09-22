@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../../utils/firebase";
 import { toast } from "react-toastify";
-import { registerAsync } from "../../store/authSlice";
+import { getCurrentUserAsync, registerAsync } from "../../store/authSlice";
 import { useAppDispatch } from "../../hooks/redux";
 
 const Login: React.FC = () => {
@@ -36,7 +36,48 @@ const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
+    
+    // Check if we're in mock mode
+    if (import.meta.env.VITE_USE_MOCK_API === 'true') {
+      try {
+        // Mock login - just navigate to dashboard
+        dispatch({
+          type: 'auth/getCurrentUser/fulfilled',
+          payload: {
+            uid: 'mock-user-id',
+            email: formData.email,
+            displayName: 'Mock User',
+            photoURL: null,
+            emailVerified: true,
+            isAnonymous: false,
+            tenantId: null,
+            providerData: [],
+            metadata: {
+              creationTime: new Date().toISOString(),
+              lastSignInTime: new Date().toISOString(),
+            }
+          }
+        });
+        
+        localStorage.setItem("idToken", "mock-token");
+        toast.success("Login successful (mock)!");
+        setLoading(false);
+        navigate("/dashboard");
+        return;
+      } catch (error: any) {
+        setLoading(false);
+        setErrors({ general: error.message });
+        toast.error(error.message || "Login failed. Please try again.");
+        return;
+      }
+    }
+    
+    // Firebase login
     try {
+      if (!auth) {
+        throw new Error("Firebase auth is not initialized");
+      }
+      
       const userCredential = await signInWithEmailAndPassword(
         auth,
         formData.email,
@@ -70,8 +111,8 @@ const Login: React.FC = () => {
           tenantId: userCredential.user.tenantId,
           providerData: userCredential.user.providerData,
           metadata: {
-            creationTime: userCredential.user.metadata.creationTime,
-            lastSignInTime: userCredential.user.metadata.lastSignInTime,
+            creationTime: userCredential.user.metadata?.creationTime,
+            lastSignInTime: userCredential.user.metadata?.lastSignInTime,
           }
         }
       });
@@ -89,6 +130,49 @@ const Login: React.FC = () => {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     setErrors({});
+    
+    // Check if we're in mock mode
+    if (import.meta.env.VITE_USE_MOCK_API === 'true') {
+      try {
+        // Mock Google login
+        dispatch({
+          type: 'auth/getCurrentUser/fulfilled',
+          payload: {
+            uid: 'mock-google-user-id',
+            email: 'mock@example.com',
+            displayName: 'Mock Google User',
+            photoURL: null,
+            emailVerified: true,
+            isAnonymous: false,
+            tenantId: null,
+            providerData: [],
+            metadata: {
+              creationTime: new Date().toISOString(),
+              lastSignInTime: new Date().toISOString(),
+            }
+          }
+        });
+        
+        localStorage.setItem("idToken", "mock-google-token");
+        toast.success("Google login successful (mock)!");
+        setGoogleLoading(false);
+        navigate("/dashboard");
+        return;
+      } catch (error: any) {
+        setGoogleLoading(false);
+        setErrors({ general: error.message });
+        toast.error(error.message || "Google login failed. Please try again.");
+        return;
+      }
+    }
+    
+    // Firebase Google login
+    if (!auth) {
+      setGoogleLoading(false);
+      toast.error("Firebase auth is not initialized");
+      return;
+    }
+    
     const provider = new GoogleAuthProvider();
     try {
       const credential = await signInWithPopup(auth, provider);
@@ -130,8 +214,8 @@ const Login: React.FC = () => {
           tenantId: user.tenantId,
           providerData: user.providerData,
           metadata: {
-            creationTime: user.metadata.creationTime,
-            lastSignInTime: user.metadata.lastSignInTime,
+            creationTime: user.metadata?.creationTime,
+            lastSignInTime: user.metadata?.lastSignInTime,
           }
         }
       });

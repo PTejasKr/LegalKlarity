@@ -23,7 +23,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
   
   const handleLogout = async () => {
-    await signOut(getAuth());
+    // Check if we're in mock mode
+    if (import.meta.env.VITE_USE_MOCK_API === 'true') {
+      localStorage.removeItem("idToken");
+      dispatch(getCurrentUserAsync());
+      navigate("/");
+      return;
+    }
+    
+    // Firebase logout
+    const auth = getAuth();
+    if (auth) {
+      await signOut(auth);
+    }
     localStorage.removeItem("idToken");
     dispatch(getCurrentUserAsync());
     navigate("/");
