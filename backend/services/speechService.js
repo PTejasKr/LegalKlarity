@@ -28,8 +28,7 @@ const transcribeAudio = async (audioBuffer, languageCode = 'en-US') => {
     const [response] = await speechClient.recognize(request);
     const transcription = response.results
       .map(result => result.alternatives[0].transcript)
-      .join('
-');
+      .join('\n');
       
     return transcription;
   } catch (error) {
