@@ -6,6 +6,7 @@
     "dev": "nodemon",
     "build": "tsc --project tsconfig.build.json && npm run copy-service-account",
     "copy-service-account": "node -e \"const fs = require('fs'); const path = require('path'); const src = 'src/db/serviceAccountKey.json'; const dest = 'dist/db/serviceAccountKey.json'; const destDir = path.dirname(dest); if (!fs.existsSync(src)) { console.log('Service account key file not found, skipping copy'); } else { if (!fs.existsSync(destDir)) { fs.mkdirSync(destDir, { recursive: true }); } fs.copyFileSync(src, dest); console.log('Service account key file copied to dist directory'); }\" || echo \"Failed to copy service account key file\"",
+    "prestart": "npm run build",
     "start": "node dist/index.js",
     "start:server": "node dist/index.js",
     "test:firebase": "ts-node test-firebase.ts"

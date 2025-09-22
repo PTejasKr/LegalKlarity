@@ -1,6 +1,6 @@
 // services/riskAnalysisService.js
 
-export const calculateRiskScore = (documentAnalysis) => {
+const calculateRiskScore = (documentAnalysis) => {
   // This is a simplified risk calculation algorithm.
   // In a real application, this would be much more complex and based on legal expertise.
   
@@ -40,7 +40,7 @@ export const calculateRiskScore = (documentAnalysis) => {
   };
 };
 
-export const generateRiskReport = (riskAnalysis) => {
+const generateRiskReport = (riskAnalysis) => {
   const report = {
     overallScore: riskAnalysis.score,
     level: getRiskLevel(riskAnalysis.score),
@@ -80,4 +80,9 @@ const generateRecommendations = (factors) => {
   });
   
   return recommendations;
+};
+
+module.exports = {
+  calculateRiskScore,
+  generateRiskReport
 };
