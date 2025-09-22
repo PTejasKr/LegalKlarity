@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
-dotenv.config();
 import { app } from "./app";
+
+// Load environment variables
+dotenv.config();
 
 // Check if we're running in a Firebase environment
 const isFirebaseEnv = !!process.env.FUNCTIONS_EMULATOR ||
@@ -9,7 +11,7 @@ const isFirebaseEnv = !!process.env.FUNCTIONS_EMULATOR ||
 
 if (isFirebaseEnv) {
     // Firebase Functions deployment
-    import * as functions from "firebase-functions";
+    const functions = require("firebase-functions");
     exports.api = functions.https.onRequest(app);
 } else {
     // Standalone server deployment (for Railway, Render, etc.)
