@@ -34,6 +34,8 @@ PORT=8080
 # AI Services (optional, can use mock mode)
 GEMINI_API_KEY=your_gemini_api_key_here
 USE_MOCK_API=true  # Set to false when you have real API keys
+
+# For production, set USE_MOCK_API=false and provide a real GEMINI_API_KEY
 ```
 
 ### 5. Deploy

@@ -8,9 +8,26 @@ let serviceAccountPath;
 
 try {
     // Use service account key file instead of environment variable
-    serviceAccountPath = path.join(__dirname, 'serviceAccountKey.json');
-    serviceAccount = require(serviceAccountPath);
-    console.log("Service Account loaded from file:", serviceAccountPath);
+    // Check both src and dist directories for the service account key file
+    const possiblePaths = [
+        path.join(__dirname, 'serviceAccountKey.json'), // In dist directory after build
+        path.join(__dirname, '..', 'src', 'db', 'serviceAccountKey.json'), // In src directory during development
+    ];
+    
+    for (const possiblePath of possiblePaths) {
+        try {
+            serviceAccount = require(possiblePath);
+            serviceAccountPath = possiblePath;
+            console.log("Service Account loaded from file:", serviceAccountPath);
+            break;
+        } catch (error) {
+            // Continue to next path
+        }
+    }
+    
+    if (!serviceAccount) {
+        throw new Error("Service account key file not found in any expected location");
+    }
 } catch (error) {
     console.log("⚠️  Service account key file not found, running in mock mode");
     console.error("Service account error:", error);
