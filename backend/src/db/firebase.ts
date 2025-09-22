@@ -14,13 +14,19 @@ try {
         path.join(__dirname, '..', 'src', 'db', 'serviceAccountKey.json'), // In src directory during development
     ];
     
+    console.log("🔍 Checking for service account key file in possible paths:", possiblePaths);
+    
     for (const possiblePath of possiblePaths) {
         try {
-            serviceAccount = require(possiblePath);
-            serviceAccountPath = possiblePath;
-            console.log("Service Account loaded from file:", serviceAccountPath);
-            break;
+            console.log(`🔍 Checking path: ${possiblePath}`);
+            if (require.resolve(possiblePath)) {
+                serviceAccount = require(possiblePath);
+                serviceAccountPath = possiblePath;
+                console.log("✅ Service Account loaded from file:", serviceAccountPath);
+                break;
+            }
         } catch (error) {
+            console.log(`⚠️  Path not found: ${possiblePath}`);
             // Continue to next path
         }
     }

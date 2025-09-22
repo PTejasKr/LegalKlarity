@@ -1,7 +1,7 @@
 // ai/voiceProcessor.js
-import { transcribeAudio, synthesizeSpeech } from '../services/speechService.js';
+const { transcribeAudio, synthesizeSpeech } = require('../services/speechService.js');
 
-export const processAudioForTranscription = async (audioBuffer, languageCode = 'en-US') => {
+const processAudioForTranscription = async (audioBuffer, languageCode = 'en-US') => {
   try {
     const transcription = await transcribeAudio(audioBuffer, languageCode);
     return transcription;
@@ -11,7 +11,7 @@ export const processAudioForTranscription = async (audioBuffer, languageCode = '
   }
 };
 
-export const convertTextToSpeech = async (text, languageCode = 'en-US') => {
+const convertTextToSpeech = async (text, languageCode = 'en-US') => {
   try {
     const audioContent = await synthesizeSpeech(text, languageCode);
     return audioContent;
@@ -19,4 +19,9 @@ export const convertTextToSpeech = async (text, languageCode = 'en-US') => {
     console.error('Error converting text to speech:', error);
     throw error;
   }
+};
+
+module.exports = {
+  processAudioForTranscription,
+  convertTextToSpeech
 };

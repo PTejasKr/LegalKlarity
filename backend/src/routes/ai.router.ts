@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { authenticate } from '../middlewares/auth';
 // @ts-ignore
-import { transcribeAudio, synthesizeSpeech } from '../../ai/voiceProcessor';
+const { transcribeAudio, synthesizeSpeech } = require('../../ai/voiceProcessor');
 // @ts-ignore
-import { analyzeDocument, compareDocuments } from '../../ai/geminiProcessor';
+const { analyzeDocument, compareDocuments } = require('../../ai/geminiProcessor');
 // @ts-ignore
-import { getRiskAssessment, getComplianceScore } from '../../ai/riskAnalyzer';
+const { getRiskAssessment, getComplianceScore } = require('../../ai/riskAnalyzer');
 
 const router = Router();
 
